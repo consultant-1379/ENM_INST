@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='utf-8'?>
+<litp:root xmlns:litp="http://www.ericsson.com/litp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ericsson.com/litp litp--schema/litp.xsd" id="root">
+  <!-- Inherit SFS -->
+  <litp:node-file_systems-collection id="file_systems">
+                <litp:nfs-mount-inherit source_path="/infrastructure/storage/nfs_mounts/nfsm-new_fs" id="nfsm-new_fs"/>
+  </litp:node-file_systems-collection>
+
+  <!-- Infrastructure -->
+  <litp:infrastructure id="infrastructure">
+    <litp:infrastructure-items-collection id="items"/>
+      <!-- Storage -->
+      <litp:storage id="storage">
+        <!-- NFS mounts collection -->
+        <litp:storage-nfs_mounts-collection id="nfs_mounts">
+        <litp:nfs-mount id="nfsm-new_fs">
+          <export_path>/vx/ENM266-new_fs</export_path>
+          <mount_options>soft</mount_options>
+          <mount_point>/ericsson/tor/new_fs</mount_point>
+          <network_name>storage</network_name>
+          <provider>vs_enm_2</provider>
+        </litp:nfs-mount>
+        </litp:storage-nfs_mounts-collection>
+         <litp:storage-storage_profiles-collection id="storage_profiles">
+          <!-- DB node storage profile - update lv_var size -->
+          <litp:storage-profile id="db_node_storage_profile">
+          <litp:storage-profile-volume_groups-collection id="volume_groups">
+            <litp:volume-group id="vg1">
+              <volume_group_name>vg_root</volume_group_name>
+              <litp:volume-group-file_systems-collection id="file_systems">
+                <litp:file-system id="lv_var">
+                  <mount_point>/var</mount_point>
+                  <size>52G</size>
+                  <snap_size>40</snap_size>
+                  <type>ext4</type>
+                </litp:file-system>
+                <!-- Create lv_var2 -->
+                <litp:file-system id="lv_var2">
+                  <mount_point>/var2</mount_point>
+                  <size>2G</size>
+                  <snap_size>0</snap_size>
+                  <type>ext4</type>
+                </litp:file-system>
+              </litp:volume-group-file_systems-collection>
+              <litp:volume-group-physical_devices-collection id="physical_devices">
+                <litp:physical-device id="internal">
+                  <device_name>sda</device_name>
+                </litp:physical-device>
+              </litp:volume-group-physical_devices-collection>
+            </litp:volume-group>
+          </litp:storage-profile-volume_groups-collection>
+        </litp:storage-profile>
+       </litp:storage-storage_profiles-collection>
+      <!-- SFS service -->
+      <litp:storage-storage_providers-collection id="storage_providers">
+        <litp:sfs-service id="sfs">
+          <management_ipv4>10.144.8.29</management_ipv4>
+          <name>ieatsfsx334335</name>
+          <password_key>key-for-sfs</password_key>
+          <user_name>support</user_name>
+          <litp:sfs-service-pools-collection id="pools">
+            <litp:sfs-pool id="ENM266-pool">
+              <name>ENM266</name>
+              <litp:sfs-pool-cache_objects-collection id="cache_objects">
+                <litp:sfs-cache id="ENM266-cache">
+                  <name>ENM266_cache</name>
+                </litp:sfs-cache>
+              </litp:sfs-pool-cache_objects-collection>
+              <litp:sfs-pool-file_systems-collection id="file_systems">
+                <litp:sfs-filesystem id="fs_new_fs">
+                  <cache_name>ENM266_cache</cache_name>
+                  <path>/vx/ENM266-new_fs</path>
+                  <size>20G</size>
+                  <snap_size>0</snap_size>
+                  <litp:sfs-filesystem-exports-collection id="exports">
+                    <litp:sfs-export id="new_fs">
+                      <ipv4allowed_clients>10.144.8.0/24</ipv4allowed_clients>
+                      <options>rw,sync,no_root_squash</options>
+                    </litp:sfs-export>
+                  </litp:sfs-filesystem-exports-collection>
+                </litp:sfs-filesystem>
+              </litp:sfs-pool-file_systems-collection>
+            </litp:sfs-pool>
+          </litp:sfs-service-pools-collection>
+          <litp:sfs-service-virtual_servers-collection id="virtual_servers">
+            <litp:sfs-virtual-server id="virtual_server_pm">
+              <ipv4address>10.144.8.17</ipv4address>
+              <name>vs_pm</name>
+            </litp:sfs-virtual-server>
+            <litp:sfs-virtual-server id="virtual_server_enm_1">
+              <ipv4address>10.144.8.18</ipv4address>
+              <name>vs_enm_1</name>
+            </litp:sfs-virtual-server>
+            <litp:sfs-virtual-server id="virtual_server_enm_2">
+              <ipv4address>10.144.8.19</ipv4address>
+              <name>vs_enm_2</name>
+            </litp:sfs-virtual-server>
+          </litp:sfs-service-virtual_servers-collection>
+        </litp:sfs-service>
+       </litp:storage-storage_providers-collection>
+      </litp:storage>
+      <!-- end of storage -->
+
+      <litp:infrastructure-systems-collection id="systems">
+              <litp:system id="db-x">
+                 <litp:system-controllers-collection id="controllers"/>
+                <litp:system-disks-collection id="disks">
+                  <litp:lun-disk id="lun_disk1">
+                    <balancing_group>high</balancing_group>
+                    <bootable>false</bootable>
+                    <external_snap>false</external_snap>
+                    <lun_name>LUN_DB</lun_name>
+                    <name>sdj</name>
+                    <shared>true</shared>
+                    <size>2G</size>
+                    <snap_size>0</snap_size>
+                    <storage_container>SAN_POOL</storage_container>
+                  </litp:lun-disk>
+                  <litp:lun-disk id="lun_disk2">
+                    <balancing_group>high</balancing_group>
+                    <bootable>false</bootable>
+                    <external_snap>false</external_snap>
+                    <lun_name>LUN_DB2</lun_name>
+                    <name>sdb</name>
+                    <shared>true</shared>
+                    <size>5G</size>
+                    <snap_size>0</snap_size>
+                    <storage_container>SAN_POOL</storage_container>
+                  </litp:lun-disk>
+                </litp:system-disks-collection>
+                <system_name>db-x</system_name>
+              </litp:system>
+      </litp:infrastructure-systems-collection>
+
+  </litp:infrastructure>
+  <!-- end infrastructure -->
+
+  <!-- software -->
+  <litp:software id="software">
+    <litp:software-services-collection id="services">
+      <litp:vm-service id="httpd">
+        <litp:vm-service-vm_nfs_mounts-collection id="vm_nfs_mounts">
+          <!-- VM NFS mounts -->
+          <litp:vm-nfs-mount id="nfsm-new_fs">
+            <device_path>10.144.8.19:/vx/ENM266-new_fs</device_path>
+            <mount_options>soft,defaults</mount_options>
+            <mount_point>/ericsson/tor/new_fs</mount_point>
+          </litp:vm-nfs-mount>
+        </litp:vm-service-vm_nfs_mounts-collection>
+      </litp:vm-service>
+    </litp:software-services-collection>
+  </litp:software>
+  <!-- end of software -->
+</litp:root>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CIM CIMVERSION="2.0" DTDVERSION="2.0">
+  <MESSAGE ID="877" PROTOCOLVERSION="1.0">
+    <SIMPLERSP>
+      <METHODRESPONSE NAME="ExecuteClientRequest">
+        <RETURNVALUE TYPE="Navi_Error">
+          <VALUE.NAMEDINSTANCE>
+            <INSTANCENAME CLASSNAME="Navi_Error">
+            </INSTANCENAME>
+            <INSTANCE CLASSNAME="Navi_Error">
+              <PROPERTY NAME="errorCode" TYPE="uint32">
+                <VALUE>0</VALUE>
+              </PROPERTY>
+              <PROPERTY NAME="key_error" TYPE="boolean">
+                <VALUE>true</VALUE>
+              </PROPERTY>
+              <PROPERTY NAME="where" TYPE="string">
+                <VALUE>ProvisionProvider</VALUE>
+              </PROPERTY>
+              <PROPERTY NAME="why" TYPE="string">
+                <VALUE></VALUE>
+              </PROPERTY>
+            </INSTANCE>
+          </VALUE.NAMEDINSTANCE>
+        </RETURNVALUE>
+      </METHODRESPONSE>
+    </SIMPLERSP>
+  </MESSAGE>
+</CIM>

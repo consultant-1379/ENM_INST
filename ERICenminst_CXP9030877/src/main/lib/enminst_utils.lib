@@ -1,0 +1,627 @@
+# ********************************************************************
+# Ericsson LMI                                    SCRIPT
+# ********************************************************************
+#
+# (c) Ericsson LMI 2015 - All rights reserved.
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson LMI. The programs may be used and/or copied only  with the
+# written permission from Ericsson LMI or in accordance with the terms
+# and conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#
+# ********************************************************************
+# Name    : enminst_utils.lib
+# Date    : 02/02/2015
+# Revision: 0.2
+# Purpose : Various functions used by ENM scripts, for logging, file
+#           handling, etc.
+#
+# Usage   : source enminst_utils.lib
+#
+# ********************************************************************
+
+# Ensure script is sourced and not executed
+[[ "${BASH_SOURCE[0]}" = "${0}" ]] && { echo "${0} must be sourced, NOT executed"  ; exit 1; }
+
+# Ensure file is only sourced once
+[ -n "$ENM_UTILS_SOURCED" ]  && return
+export ENM_UTILS_SOURCED=true
+
+# ********************************************************************
+# GLOBAL VARIABLES
+# ********************************************************************
+
+LOG_TO_TERMINAL=true
+NEW_LOG=true
+LOG_LEVELS="FATAL ERROR WARN INFO DEBUG"
+export LOG_LEVEL=INFO
+export EXIT_INTERRUPTED=42
+
+# ********************************************************************
+# FUNCTIONS
+# ********************************************************************
+
+# ********************************************************************
+#
+# Name      : timestamp
+# Purpose   : Displays date & time.
+#             Used principally by logging functions.
+# Parameters: None
+# Return Values:
+#             0 - OK
+#             !0 - Not OK
+#
+# ********************************************************************
+function timestamp() {
+   date +"%Y-%m-%d %H:%M:%S.%3N"
+}
+export -f timestamp
+
+# ********************************************************************
+#
+# Name      : timestamp_suffix
+# Purpose   : Display timestamp useful for appending to file backups.
+# Parameters: None
+# Return Values:
+#             0 - OK
+#             !0 - Not OK
+#
+# ********************************************************************
+function timestamp_suffix (){
+   date +"%Y%m%d.%H%M%S"
+}
+export -f timestamp_suffix
+
+# ********************************************************************
+#
+# Name      : log_rotate
+# Purpose   : Moves current log file (renames with timestamp suffix)
+# Parameters: None
+# Return Values:
+#             0 - If something is OK
+#             !0 - mv failure, mv exit code
+#
+# ********************************************************************
+function log_rotate() {
+   local _date_=$(date +"%Y%m%d-%H%M%S")
+   mv $LOG_DIR/$LOG_FILE $LOG_DIR/$LOG_FILE.${_date_} 2>/dev/null
+}
+export -f log_rotate
+
+# ********************************************************************
+#
+# Name      : log_debug
+# Purpose   : Set log level to debug.
+# Parameters: None
+# Return Values:
+#             0 - OK
+#             !0 - Not OK
+#
+# ********************************************************************
+function log_debug() {
+   LOG_LEVEL=DEBUG
+}
+export -f log_debug
+
+# ********************************************************************
+#
+# Name      : log_init
+# Purpose   : Sets the directory and filename for the log file.  If
+#             the directory path doesn't exist then it attempts to
+#             make it.  The file is then touched to verify it can be
+#             written to.
+# Parameters:  $1 : Filename (either filename, or directory path and
+#                   filename)
+# Return Values:
+#             0 - OK
+#             1 - Failed to create log directory
+#             2 - Cannot write to log file
+#
+# ********************************************************************
+function log_init() {
+   LOG_DIR=$(dirname  $1 2>/dev/null)
+   export LOG_FILE=$(basename $1 2>/dev/null)
+   mkdir -p $LOG_DIR || return 1
+   touch $LOG_DIR/$LOG_FILE || return 2
+}
+export -f log_init
+
+# ********************************************************************
+#
+# Name      : log_to_screen
+# Purpose   : Turn logging to screen on or off.
+# Parameters:   $1 : true / false
+# Return Values:
+#       0 - OK
+#       !0 - If something is not OK
+#
+# ********************************************************************
+function log_to_screen() {
+   [[ "$1" == false ]] && unset LOG_TO_TERMINAL
+   [[ "$1" == true  ]] && LOG_TO_TERMINAL=true
+}
+export -f log_to_screen
+
+# ********************************************************************
+#
+# Name      : log_new
+# Purpose   : Set/unset new log flag
+# Parameters: None
+# Return Values:
+#       0 - If something is OK
+#       !0 - If something is not OK
+#
+# ********************************************************************
+function log_new() {
+   [[ "$1" == false ]] && unset NEW_LOG
+   [[ "$1" == true  ]] && NEW_LOG=true
+}
+export -f log_new
+
+# ********************************************************************
+#
+# Name      : log_header
+# Purpose   : Print a header for current function to log/screen.
+# Parameters:   $1 : function name
+# Return Values:
+#       0 - If something is OK
+#       !0 - If something is not OK
+#
+# ********************************************************************
+function log_header {
+   local divider='-----------------------------------------------------------------'
+   log INFO $divider
+   log INFO $@
+   log INFO $divider
+}
+export -f log_header
+
+# ********************************************************************
+#
+# Name      : function_exists
+# Purpose   : Check to see if a function exists
+# Parameters:   $1 : function name
+# Return Values:
+#       0 - If something is OK
+#       !0 - If something is not OK
+#
+# ********************************************************************
+function log() {
+   local _level_=${1}
+   local _time_=$(timestamp)
+   local _level_ok_
+   local _log_string_
+   shift
+
+   for l in $LOG_LEVELS
+   do
+      [[ "$_level_"   = $l ]] && _level_ok_=true # Valid log level in call
+      [[ "$LOG_LEVEL" = $l ]] && break           # Matched current logging level
+   done
+
+   [[ "$_level_ok_" = 'true' ]] || return 0 # Either logging level not valid, or
+                                            # LOG_LEVEL below threshold so no logging.
+
+   local func_index=1
+   if [[ ${FUNCNAME[1]} = 'log_header' || ${FUNCNAME[1]} = 'log_command_output' ]] ; then
+      func_index=2
+
+   fi
+
+   _log_string_=$(echo "$_time_ $(pad 5 $_level_) $(pad 30 ${FUNCNAME[$func_index]}): $@")
+
+   if [[ "$NEW_LOG" ]] ; then
+      log_rotate
+      unset NEW_LOG
+   fi
+
+   if [[ "$LOG_TO_TERMINAL" ]] ; then
+      echo "$_log_string_" | tee -a $LOG_DIR/$LOG_FILE
+   else
+      echo "$_log_string_"  >> $LOG_DIR/$LOG_FILE
+   fi
+}
+export -f log
+
+# ********************************************************************
+#
+# Name      : log_command_output
+# Purpose   : Writes input line to log file as INFO.
+#             This function was introduced to accommodate the need to
+#             log LITP errors to both the screen and the enminst.log
+#             file.  This function will take the output from the LITP
+#             command and write it to the log file, one line at a time.
+# Parameters: $@ - Piped output from previous command
+# Return Values:
+#       0 - If something is OK
+#       !0 - If something is not OK
+#
+# ********************************************************************
+function log_command_output() {
+   while read line; do
+      log INFO $line
+   done
+}
+export -f log_command_output
+
+# ********************************************************************
+#
+# Name      : error
+# Purpose   : Logs error, then exits.
+# Parameters:  $1 - Error string to be logged
+#              $2 - Optional exit code (defaults to 1 if not supplied)
+# Return Values:
+#              No return, function exits:
+#               1 - default exit code
+#              $2 - exit code is value of 2nd arg if supplied
+#
+# ********************************************************************
+function error() {
+
+   log ERROR "$@"
+   log ERROR "Enminst Exiting (Version: $ENMINST_VERSION)"
+   exit 1
+}
+export -f error
+
+# ********************************************************************
+#
+# Name      : warning
+# Purpose   : Logs a warnging message.
+#              $2 - Optional exit code. If specified then "exit" is called/
+# Parameters:  $1 - Message string to be logged
+# Return Values:
+#              No return.
+#
+# ********************************************************************
+function warning() {
+
+   log WARN "${1}"
+   if [ $2 ] ; then
+      exit $2
+   fi
+}
+export -f warning
+
+# ********************************************************************
+#
+# Name      : dos2unix
+# Purpose   : Convert file in place from 'DOS' format to 'Unix' format
+#             (i.e. remove carriage returns at line endings).
+# Parameters:   $1 : file name
+# Return Values:
+#             0 - If something is OK
+#            >0 - SED exit code
+#
+# ********************************************************************
+function dos2unix() {
+   sed -i -e 's/\r//' "$1"
+}
+export -f dos2unix
+
+# ********************************************************************
+#
+# Name      : read_file_ok
+# Purpose   : Test if file is okay for reading - verifies it exists,
+#             is a regular file, that it can be read and that it is
+#             not zero sized.
+# Parameters:  $1 - file name
+# Return Values:
+#               0 - File can be read ok
+#               1 - File does not exist
+#               2 - File is not regular file
+#               3 - File is zero sized
+#               4 - File cannot be read
+#
+# ********************************************************************
+function read_file_ok() {
+   for file in $@
+   do
+      if [ ! -e "$file" ] ; then
+         log ERROR "Mandatory File $file does not exist"
+         return 1
+      fi
+
+      if [ ! -f "$file" ] ; then
+         log ERROR "Mandatory File $file is not regular file"
+         return 2
+      fi
+
+      if [ ! -s "$file" ] ; then
+         log ERROR "Mandatory File $file is zero sized"
+         return 3
+      fi
+
+      if [ ! -r "$file" ] ; then
+         log ERROR "Mandatory File $file cannot be read"
+         return 4
+      fi
+
+      log DEBUG "Mandatory File $file exists and can be read"
+   done
+   return 0
+}
+export -f read_file_ok
+
+# ********************************************************************
+#
+# Name      : read_opt_file_ok
+# Purpose   : Test if an optional file is okay for reading - verifies
+#             it exists, is a regular file, that it can be read and
+#             that it is not zero sized.
+# Parameters:  $1 - file name
+# Return Values:
+#               0 - File can be read ok
+#               1 - File does not exist
+#               2 - File is not regular file
+#               3 - File is zero sized
+#               4 - File cannot be read
+#
+# ********************************************************************
+function read_opt_file_ok() {
+   for file in $@
+   do
+      if [ ! -e "$file" ] ; then
+         log WARN "Optional File $file does not exist"
+         return 1
+      fi
+
+      if [ ! -f "$file" ] ; then
+         log WARN "Optional File file is not regular file"
+         return 2
+      fi
+
+      if [ ! -s "$file" ] ; then
+         log WARN "Optional File $file is zero sized"
+         return 3
+      fi
+
+      if [ ! -r "$file" ] ; then
+         log WARN "Optional File $file cannot be read"
+         return 4
+      fi
+
+      log DEBUG "Optional File $file exists and can be read"
+   done
+   return 0
+}
+export -f read_opt_file_ok
+
+# ********************************************************************
+#
+# Name      : get_sed_params
+# Purpose   : Read the provided SED file and make each tag=value pair
+#             available to the script.
+#             For example, this allows a script to directly use tag
+#             $LMS_IP in the script and the value will be given.
+# Parameters:   $1 : SED file name
+#
+# ********************************************************************
+function get_sed_params() {
+   local file=$1
+   shift
+   local list=$@
+
+   check_vars file
+   read_file_ok $file
+
+   [[ -z "$list" ]] && list=$(cut -d= -f -1 $file | grep . |  grep -v \# )
+
+   for param in $list
+   do
+      line=$(grep  ^${param}= $file)
+      if [[ $? -eq 0 ]] ; then
+         param=$(cut -d= -f 1 <<< $line )
+         val=$(cut -d= -f 2- <<< $line)
+
+         if [[ ! "$val" = "" ]] ; then
+            eval $param=0
+            export $param=$val
+            log DEBUG "exported $param=$val"
+         fi
+      fi
+    done
+}
+export -f get_sed_params
+
+# ********************************************************************
+#
+# Name      : get_sed_params_nolog
+# Purpose   : Read the provided SED file and make each tag=value pair
+#             available to the script.
+#             For example, this allows a script to directly use tag
+#             $LMS_IP in the script and the value will be given.
+#             However, do not log the value - useful when dealing with
+#             sensitive parameters, e.g. passwords.
+# Parameters:   $1 : SED file name
+#
+# ********************************************************************
+function get_sed_params_nolog() {
+   local file=$1
+   shift
+   local list=$@
+
+   check_vars file
+   read_file_ok $file
+
+   [[ -z "$list" ]] && list=$(cut -d= -f -1 $file | grep . |  grep -v \# )
+
+   for param in $list
+   do
+      line=$(grep  ^${param}= $file)
+      if [[ $? -eq 0 ]] ; then
+         param=$(cut -d= -f 1 <<< $line )
+         val=$(cut -d= -f 2- <<< $line)
+
+         if [[ ! "$val" = "" ]] ; then
+            eval $param=0
+            export $param=$val
+            log DEBUG "exported $param=NOTLOGGED"
+         fi
+      fi
+    done
+}
+export -f get_sed_params_nolog
+
+# ********************************************************************
+#
+# Name      : function_exists
+# Purpose   : Check to see if a function exists
+# Parameters:   $1 : function name
+#
+# ********************************************************************
+function function_exists() {
+  declare -f -F $1 > /dev/null
+  retval=$?
+  [[ "$retval" -eq 0 ]] && log DEBUG "Function $1 exists." || log DEBUG "Function $1 does not exist."
+  return $retval
+}
+export -f function_exists
+
+# ********************************************************************
+#
+# Name      : val_in_array
+# Purpose   : Check to see if a given value is in an given array.
+# Parameters:   $1 : value to check
+#               $@ : array to check in
+# Return Values:
+#               0 - if value is found in the array
+#               1 - if value is not found in the array
+#
+# ********************************************************************
+function val_in_array() {
+   val=$1
+   shift
+   for item in $@ ;
+   do
+      [[ "$val" = "$item" ]] && return 0
+   done
+   return 1
+}
+export -f val_in_array
+
+
+# ********************************************************************
+#
+# Name      : strip_comments_and_blanks
+# Purpose   : Remove command and blank lines from given file
+# Parameters:   $1 : file name
+#
+# ********************************************************************
+function strip_comments_and_blanks () {
+   sed 's:#.*$::g'  | grep .
+
+}
+export -f strip_comments_and_blanks
+
+# ********************************************************************
+#
+# Name      : pad
+# Purpose   : Right-Pad string for output in log file.
+# Parameters:   $1 : string to pad
+#               $2 : amount of spaces to pad
+#
+# ********************************************************************
+function pad() {
+    STR_LEN=${1:-30} # Number of spaces to right pad with (default 30)
+    STR=${2:-' '}    # String to right-pad with spaces
+    printf "%-${STR_LEN}s" "$STR"
+}
+export -f pad
+
+# ********************************************************************
+#
+# Name      : check_vars
+# Purpose   : Check that the given variable has a value.
+# Parameters:   $@ : list of variables to check values of
+#
+# ********************************************************************
+check_vars() {
+   for v in $@
+   do
+      [[ -z $(eval echo \$$v) ]] && error "$v is not set"
+      log DEBUG "$v is set to $(eval echo \$$v)"
+   done
+}
+export -f check_vars
+
+# ********************************************************************
+#
+# Name      : check_vars_nolog
+# Purpose   : Check that the given variable has a value, but do not
+#             print out the value, useful for sensitive data, e.g.
+#             passwords.
+# Parameters:   $@ : list of variables to check values of
+#
+# ********************************************************************
+check_vars_nolog() {
+   for v in $@
+   do
+      [[ -z $(eval echo \$$v) ]] && error "$v is not set"
+      log DEBUG "$v is set to NOTLOGGED"
+   done
+}
+export -f check_vars_nolog
+
+# ********************************************************************
+#
+# Name      : misc_iniget
+# Purpose   : Read the ini file [$2] specified and return the value
+#             of parameter [$3] from a particular block [$1]
+#             List all parameters if parameter value not specified
+# Parameters: $1 - Tag name, example [THIS_IS_TAG]
+#             $2 - Full path of ini file
+#             $3 - Parameter name [optional]
+#
+# ********************************************************************
+function misc_iniget() {
+  local _section_=$1; local _file_=$2
+  local _para_=$3; local _ptr_=0
+  [[ ! -f ${_file_} ]] && { return 1; }
+
+  /bin/egrep -v "^[ ]*#.*$" ${_file_} > ${_file_}.inuse 2> /dev/null
+  /usr/bin/perl -pi -e "s| |_BLANK_|g" ${_file_}.inuse 2> /dev/null
+  for FILELINE in $(/usr/bin/perl -p -e 's|(.+?)(\s*=\s*)(.*)|$1=$3|g' ${_file_}.inuse); do
+    FILELINE=$(echo ${FILELINE} | /usr/bin/perl -pi -e "s|_BLANK_| |g")
+    echo "${FILELINE}" | /bin/egrep "^\[${_section_}\]$" > /dev/null 2>&1 && { _ptr_=1; continue; }
+    [[ -z ${FILELINE} ]] && continue
+    [[ ${_ptr_} -eq 1 ]] && { echo "${FILELINE}" | /bin/egrep "^\[.*\]$"  > /dev/null 2>&1 && break; }
+    [[  ( ${_ptr_} -eq 1 ) && ( -z "${_para_}" ) ]] && echo "${FILELINE}"
+    if [[ ( ${_ptr_} -eq 1 ) && ( ! -z "${_para_}" ) ]]; then
+      echo "${FILELINE}" | /bin/egrep "^${_para_}[ ]*=[ ]*.*" > /dev/null 2>&1
+      [[ $? -eq 0 ]] && { echo "${FILELINE}" | /usr/bin/perl -p -e 's|.+\s*=\s*(.+)|$1|g'; return 0; }
+    fi
+  done
+  /bin/rm -f ${_file_}.inuse > /dev/null 2>&1
+  return 1
+}
+export -f misc_iniget
+# ********************************************************************
+#
+# Name      : ask_for_confirmation
+# Purpose   : Asks the user for confirmation.
+#             User can answer Yes or no.
+# Parameters: $1 - Question to ask
+#             $2 - Variable name to store result
+# Return Values:
+#               y - if answer was yes
+#               n - if answer was no
+# ********************************************************************
+function ask_for_confirmation() {
+  _ask_question=$1
+  _result_variable=$2
+  while true; do
+    prompt=" [YeS] to confirm or [no|n] to cancel"
+    log INFO "${_ask_question} ${prompt}"
+    read -r yn
+    log INFO "Your answer was: $yn"
+    case $yn in
+      [Y][e][S] )   _answer="y"; break;;
+      [Nn] )        _answer="n"; break;;
+      [Nn][Oo] )    _answer="n"; break;;
+      * ) log INFO "Please respond with ${prompt}";;
+    esac
+  done
+  eval "$_result_variable"="$_answer"
+}

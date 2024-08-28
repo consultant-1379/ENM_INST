@@ -1,0 +1,16 @@
+<litp:root xmlns:litp="http://www.ericsson.com/litp">
+    <litp:deployment id="enm">
+        <litp:deployment-clusters-collection id="clusters">
+            <litp:vcs-cluster id="str_cluster">
+                <litp:cluster-nodes-collection id="nodes">
+                    <litp:node id="str-1">
+                        <hostname>cloud-str-1</hostname>
+                    </litp:node>
+                    <litp:node id="str-2">
+                        <hostname>cloud-svc-2</hostname>
+                    </litp:node>
+                </litp:cluster-nodes-collection>
+            </litp:vcs-cluster>
+        </litp:deployment-clusters-collection>
+    </litp:deployment>
+</litp:root>

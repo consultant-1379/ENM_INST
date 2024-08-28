@@ -1,0 +1,111 @@
+*** Blade Profile Definition ***
+----------------------------------
+PortNumber,PortType,PXE,PortSpeed,Uplink,Network1:UnTagged:UpLinkSet:NetworkMaxSpeed [Network2:UnTagged:UpLinkSet:NetworkMaxSpeed] ...
+
+PortNumber			<number>
+
+PortType			SN|MN
+                    SN - Single Network
+                    MN - Multiple Network
+
+PXE 				enabled|disabled 
+                    enabled - PXE boot enabled on the port
+                    disabled - PXE boot disabled on the port
+                    
+PortSpeed  		 	auto|preferred|<speed in Mb>
+                    auto - the maximum port speed is constrained by maximum configured speed for the network
+                    preferred - the speed of the port is the same as the preferred speed of the network
+                    <speed in Mb> - custom port speed in Mb
+                    
+Uplink  			none|<SharedUplinkSet name>
+                    none - SharedUplinkSet is not defined
+                    <SharedUplinkSet name> - SharedUplinkSet name (e.g. uplink_A) is a key with corresponding value 
+                        defined in SED
+--------------------------------------------------------------------------------
+Network1:Untagged:UplinkSet:NetworkMaxSpeed
+
+Networ1     		<network name>
+
+Untagged			true|false
+                    true - network vlan untagged, network can be used to PXE boot
+                    false - network vlan tagged
+                    
+UplinkSet			true|false
+                    true -  network is part of SharedUplinkSet, when set to true Uplink in port definition 
+                        and VLAN_ID in SED have to be defined
+                    false - network is not part of SharedUplinkSet
+                    
+NetworkMaxSpeed		none|<number in Mb>
+                    none - network speed unrestricted
+                    <number in Mb> - custom max speed, any speed from 100Mb to MAX configurable (on FLEX10 10000Mb) 
+                        in 100Mb increments
+
+
+#ENM Single Enclosure Profile Service Nodes
+[ENM_SE_svc_node]
+1,MN,enabled,9900,uplink_A,services_A:false:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:false:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,services_B:false:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_A:false:false:none,internal_B:true:true:none
+3,SN,disabled,100,none,heartbeat1_A:false:false:none
+4,SN,disabled,100,none,heartbeat2_B:false:false:none
+[ENM_SE_svc_node_END]
+
+#ENM Single Enclosure Profile Scripting Nodes
+[ENM_SE_scp_node]
+1,MN,enabled,9900,uplink_A,services_A:false:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:false:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,services_B:false:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_A:false:false:none,internal_B:true:true:none
+3,SN,disabled,100,none,heartbeat1_A:false:false:none
+4,SN,disabled,100,none,heartbeat2_B:false:false:none
+[ENM_SE_scp_node_END]
+
+
+#ENM Single Enclosure Profile Database Nodes
+[ENM_SE_db_node]
+1,MN,enabled,9900,uplink_A,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:false:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,backup_B:false:true:2500,storage_B:false:true:none,jgroups_A:false:false:none,internal_B:true:true:none
+3,SN,disabled,100,none,heartbeat1_A:false:false:none
+4,SN,disabled,100,none,heartbeat2_B:false:false:none
+[ENM_SE_db_node_END]
+
+
+#ENM Multi Enclosure Service Profile
+[ENM_ME_svc_node]
+1,MN,enabled,9900,uplink_A,services_A:false:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:true:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,services_B:false:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_B:false:true:none,internal_B:true:true:none
+3,SN,disabled,100,uplink_A,heartbeat1_A:false:true:none
+4,SN,disabled,100,uplink_B,heartbeat2_B:false:true:none
+[ENM_ME_svc_node_END]
+
+#ENM Multi Enclosure Scripting Profile
+[ENM_ME_scp_node]
+1,MN,enabled,9900,uplink_A,services_A:false:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:true:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,services_B:false:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_B:false:true:none,internal_B:true:true:none
+3,SN,disabled,100,uplink_A,heartbeat1_A:false:true:none
+4,SN,disabled,100,uplink_B,heartbeat2_B:false:true:none
+[ENM_ME_scp_node_END]
+
+
+#ENM Multi Enclosure Database Profile
+[ENM_ME_db_node]
+1,MN,enabled,9900,uplink_A,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:true:none,internal_A:true:true:none
+2,MN,disabled,9900,uplink_B,backup_B:false:true:2500,storage_B:false:true:none,jgroups_B:false:true:none,internal_B:true:true:none
+3,SN,disabled,100,uplink_A,heartbeat1_A:false:true:none 
+4,SN,disabled,100,uplink_B,heartbeat2_B:false:true:none
+[ENM_ME_db_node_END]
+
+#ENM Multi Enclosure Profile without LITP Management via Internal Vlan run via -e option
+[ENM_ME_NON_MGMT]
+1,MN,enabled,9900,uplink_A,services_A:true:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:true:none,internal_A:false:true:none
+2,MN,disabled,9900,uplink_B,services_B:true:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_B:false:true:none,internal_B:false:true:none
+3,SN,disabled,100,uplink_A,heartbeat1_A:false:true:none
+4,SN,disabled,100,uplink_B,heartbeat2_B:false:true:none
+[ENM_ME_NON_MGMT_END]
+
+
+#ENM Single Enclosure Profile without LITP Management via Internal Vlan run via -e option
+[ENM_SE_NON_MGMT]
+1,MN,enabled,9900,uplink_A,services_A:true:true:none,backup_A:false:true:2500,storage_A:false:true:none,jgroups_A:false:false:none,internal_A:false:false:none
+2,MN,disabled,9900,uplink_B,services_B:true:true:none,backup_B:false:true:2500,storage_B:false:true:none,jgroups_A:false:false:none,internal_A:false:false:none
+3,SN,disabled,100,none,heartbeat1_A:false:false:none
+4,SN,disabled,100,none,heartbeat2_B:false:false:none
+[ENM_SE_NON_MGMT_END]
+

@@ -1,0 +1,106 @@
+{
+  "_embedded": {
+    "item": [
+      {
+        "id": "httpd",
+        "item-type-name": "vm-service",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/httpd"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-service"
+          }
+        },
+        "properties": {
+          "internal_status_check": "on",
+          "service_name": "httpd",
+          "node_hostname_map": "{}",
+          "ram": "4096M",
+          "cleanup_command": "/sbin/service httpd stop-undefine --stop-timeout=300",
+          "image_name": "lsb-image",
+          "cpus": "2"
+        }
+      },
+      {
+        "id": "jms_service",
+        "item-type-name": "service",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/jms_service"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/service"
+          }
+        },
+        "properties": {
+          "service_name": "jboss",
+          "cleanup_command": "/sbin/service jboss stop"
+        }
+      },
+      {
+        "id": "amos",
+        "item-type-name": "vm-service",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/amos"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-service"
+          }
+        },
+        "properties": {
+          "internal_status_check": "on",
+          "service_name": "amos",
+          "node_hostname_map": "{}",
+          "ram": "81920M",
+          "cleanup_command": "/sbin/service amos stop-undefine --stop-timeout=300",
+          "image_name": "lsb-image",
+          "cpus": "16"
+        }
+      },
+      {
+        "id": "pmserv",
+        "item-type-name": "vm-service",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/pmserv"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-service"
+          }
+        },
+        "properties": {
+          "internal_status_check": "on",
+          "service_name": "pmserv",
+          "node_hostname_map": "{}",
+          "ram": "8192M",
+          "cleanup_command": "/sbin/service pmserv stop-undefine --stop-timeout=300",
+          "image_name": "jboss-image",
+          "cpus": "4"
+        }
+      }
+
+    ]
+  },
+  "item-type-name": "collection-of-service-base",
+  "applied_properties_determinable": true,
+  "state": "Applied",
+  "_links": {
+    "self": {
+      "href": "https://localhost:9999/litp/rest/v1/software/services"
+    },
+    "collection-of": {
+      "href": "https://localhost:9999/litp/rest/v1/item-types/service-base"
+    }
+  },
+  "id": "services"
+}

@@ -1,0 +1,11 @@
+This resource directory is used for testing "sed_update.py" script.
+
+New kinds of Deployment Description (old and new) and the corresponding SED and
+expected SED can be placed in individual directories with the following format,
+and the test should take care of running the script sed_update.py passing these
+files and comparing the generated updated SED with the given expected file:
+
+    1. *.from.xml            -> representing the from state DD
+    2. *.to.xml              -> representing the to state DD
+    3. *.cfg                 -> representing the SED file
+    4. *.cfg.expected        -> representing a expected SED updated

@@ -1,0 +1,49 @@
+<litp:root xmlns:litp="http://www.ericsson.com/litp">
+    <litp:deployment id="enm">
+        <litp:deployment-clusters-collection id="clusters">
+            <litp:vcs-cluster id="str_cluster">
+                <litp:cluster-services-collection id="nodes">
+<litp:vcs-clustered-service id="gossiprouter_clustered_service">
+  <active>2</active>
+  <name>gossiprouter</name>
+  <node_list>db-2,db-1</node_list>
+  <standby>0</standby>
+  <litp:clustered-service-applications-collection id="applications">
+    <litp:service-inherit source_path="/software/services/gossiprouter_service" id="gossiprouter_service">
+      <litp:service-packages-collection-inherit source_path="/software/services/gossiprouter_service/packages" id="packages">
+        <litp:package-inherit source_path="/software/services/gossiprouter_service/packages/gossiprouter_package" id="gossiprouter_package"/>
+      </litp:service-packages-collection-inherit>
+    </litp:service-inherit>
+  </litp:clustered-service-applications-collection>
+  <litp:clustered-service-ha_configs-collection id="ha_configs">
+    <litp:ha-service-config id="gossiprouter_service">
+      <status_interval>30</status_interval>
+      <status_timeout>15</status_timeout>
+      <clean_timeout>300</clean_timeout>
+      <fault_on_monitor_timeouts>2</fault_on_monitor_timeouts>
+      <restart_limit>2</restart_limit>
+      <startup_retry_limit>2</startup_retry_limit>
+      <tolerance_limit>2</tolerance_limit>
+    </litp:ha-service-config>
+  </litp:clustered-service-ha_configs-collection>
+  <litp:clustered-service-runtimes-collection id="runtimes"/>
+  <offline_timeout>300</offline_timeout>
+  <online_timeout>2400</online_timeout>
+  <litp:vcs-clustered-service-filesystems-collection id="filesystems"/>
+  <litp:vcs-clustered-service-ipaddresses-collection id="ipaddresses">
+    <litp:vip id="gossiprouter_vip1">
+      <ipaddress>10.247.244.44</ipaddress>
+      <network_name>internal</network_name>
+    </litp:vip>
+    <litp:vip id="gossiprouter_vip2">
+      <ipaddress>10.247.244.45</ipaddress>
+      <network_name>internal</network_name>
+    </litp:vip>
+  </litp:vcs-clustered-service-ipaddresses-collection>
+  <litp:vcs-clustered-service-triggers-collection id="triggers"/>
+</litp:vcs-clustered-service>
+                </litp:cluster-services-collection>
+            </litp:vcs-cluster>
+        </litp:deployment-clusters-collection>
+    </litp:deployment>
+</litp:root>

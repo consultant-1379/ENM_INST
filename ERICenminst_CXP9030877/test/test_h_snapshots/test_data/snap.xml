@@ -1,0 +1,33 @@
+<PARAMVALUE NAME="" TYPE="string">
+  <VALUE>&#32;</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Name" TYPE="string">
+  <VALUE>@NAME@</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Description" TYPE="string">
+  <VALUE>@DESC@</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Creation time" TYPE="string">
+  <VALUE>07/07/15 12:04:29</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Source LUN(s)" TYPE="string">
+  <VALUE>@SLUN@</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Source CG" TYPE="string">
+  <VALUE>N/A</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="State" TYPE="string">
+  <VALUE>Ready</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Allow Read/Write" TYPE="string">
+  <VALUE>No</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Modified" TYPE="string">
+  <VALUE>No</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Allow auto delete" TYPE="string">
+  <VALUE>Yes</VALUE>
+</PARAMVALUE>
+<PARAMVALUE NAME="Expiration date" TYPE="string">
+  <VALUE>Never</VALUE>
+</PARAMVALUE>

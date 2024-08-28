@@ -1,0 +1,23 @@
+# Hash map
+declare -A disk_list
+# Loop through the data structure we have been passed in and build up a bash
+# hash of device paths based on uuid. Clear all disks in the model
+disk_list_item=\$(shopt -s nocaseglob; ls /dev/disk/by-id/scsi*@@TARGET_UUID@@)
+if [ ! -n "$disk_list_item" ]; then
+    disk_list_item=\$(shopt -s nocaseglob; ls /dev/disk/by-id/cciss*@@TARGET_UUID@@)
+fi
+disk_list["boot_disk"]=\$disk_list_item
+
+if [[ ! -b \${disk_list["boot_disk"]} ]]; then
+    echo "ERROR: Could not find disk of UUID '@@TARGET_UUID@@'" >> /dev/tty1;
+    read;
+    exit 1;
+fi
+drive_dev=\$(basename \$(find /dev/disk/by-id -iname scsi\*@@TARGET_UUID@@ -printf "%l"))
+if [ ! -n "$drive_dev" ]; then
+    drive_dev=\$(basename \$(find /dev/disk/by-id -iname cciss\*@@TARGET_UUID@@ -printf "%l"))
+fi
+clearpart_devs=\${clearpart_devs},\${drive_dev}
+echo "clearpart --initlabel --all --drives=\${clearpart_devs/#,/}">/tmp/partitioninfo
+
+# NB. must be after the clearpart command - hence 2 loops

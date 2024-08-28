@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<litp:root xmlns:litp="http://www.ericsson.com/litp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ericsson.com/litp litp--schema/litp.xsd" id="root">
+  <!-- str-2 & str-3 are contrived examples for the unit tests, str-1 is what things
+  should look like in a real deployment XML-->
+  <litp:root-deployments-collection id="deployments">
+    <litp:deployment id="enm">
+      <litp:deployment-clusters-collection id="clusters">
+        <litp:vcs-cluster id="str_cluster">
+          <litp:cluster-configs-collection id="configs"/>
+          <litp:cluster-nodes-collection id="nodes">
+            <litp:node id="str-1">
+              <hostname>%%str_node1_hostname%%</hostname>
+              <litp:node-network_interfaces-collection id="network_interfaces">
+                <litp:bond id="bond0">
+                  <bridge>br1</bridge>
+                  <device_name>bond0</device_name>
+                  <miimon>100</miimon>
+                  <mode>4</mode>
+                  <xmit_hash_policy>layer3+4</xmit_hash_policy>
+                </litp:bond>
+                <litp:eth id="eth0">
+                  <device_name>eth0</device_name>
+                  <macaddress>%%str_node1_eth0_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth1">
+                  <device_name>eth1</device_name>
+                  <macaddress>%%str_node1_eth1_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth2">
+                  <device_name>eth2</device_name>
+                  <macaddress>%%str_node1_eth2_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth3">
+                  <device_name>eth3</device_name>
+                  <macaddress>%%str_node1_eth3_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth4">
+                  <device_name>eth4</device_name>
+                  <macaddress>%%str_node1_eth4_macaddress%%</macaddress>
+                  <pxe_boot_only>true</pxe_boot_only>
+                </litp:eth>
+                <litp:eth id="eth5">
+                  <network_name>heartbeat1</network_name>
+                  <device_name>eth5</device_name>
+                  <macaddress>%%str_node1_eth5_macaddress%%</macaddress>
+                </litp:eth>
+                <litp:eth id="eth6">
+                  <network_name>heartbeat2</network_name>
+                  <device_name>eth6</device_name>
+                  <macaddress>%%str_node1_eth6_macaddress%%</macaddress>
+                </litp:eth>
+                <litp:vlan id="vlan_%%VLAN_ID_backup%%_backup">
+                  <ipaddress>%%str_node1_IP_backup%%</ipaddress>
+                  <network_name>backup</network_name>
+                  <device_name>bond0.%%VLAN_ID_backup%%</device_name>
+                </litp:vlan>
+                <litp:vlan id="vlan_%%VLAN_ID_services%%_services">
+                  <bridge>br0</bridge>
+                  <device_name>bond0.%%VLAN_ID_services%%</device_name>
+                </litp:vlan>
+                <litp:vlan id="vlan_%%VLAN_ID_storage%%_storage">
+                  <bridge>br2</bridge>
+                  <device_name>bond0.%%VLAN_ID_storage%%</device_name>
+                </litp:vlan>
+                <litp:vlan id="vlan_%%VLAN_ID_jgroups%%_jgroups">
+                  <bridge>br3</bridge>
+                  <device_name>bond0.%%VLAN_ID_jgroups%%</device_name>
+                </litp:vlan>
+                <litp:bridge id="br0">
+                  <ipaddress>%%str_node1_IP%%</ipaddress>
+                  <ipv6address>%%str_node1_IPv6%%</ipv6address>
+                  <network_name>services</network_name>
+                  <device_name>br0</device_name>
+                  <multicast_snooping>0</multicast_snooping>
+                </litp:bridge>
+                <litp:bridge id="br1">
+                  <ipaddress>%%str_node1_IP_internal%%</ipaddress>
+                  <network_name>internal</network_name>
+                  <device_name>br1</device_name>
+                </litp:bridge>
+                <litp:bridge id="br2">
+                  <ipaddress>%%str_node1_IP_storage%%</ipaddress>
+                  <network_name>storage</network_name>
+                  <device_name>br2</device_name>
+                </litp:bridge>
+                <litp:bridge id="br3">
+                  <ipaddress>%%str_node1_IP_jgroups%%</ipaddress>
+                  <network_name>jgroups</network_name>
+                  <device_name>br3</device_name>
+                </litp:bridge>
+              </litp:node-network_interfaces-collection>
+              <litp:node-routes-collection id="routes">
+                <litp:route-inherit id="services_gateway_route" source_path="/infrastructure/networking/routes/services_gateway_route"/>
+              </litp:node-routes-collection>
+              <litp:blade-inherit id="system" source_path="/infrastructure/systems/str-1_system"/>
+            </litp:node>
+            <litp:node id="str-2">
+              <hostname>%%str_node2_hostname%%</hostname>
+              <litp:node-network_interfaces-collection id="network_interfaces">
+                <litp:bond id="bond0">
+                  <bridge>br0</bridge>
+                  <device_name>bond0</device_name>
+                  <miimon>100</miimon>
+                  <mode>4</mode>
+                  <xmit_hash_policy>layer3+4</xmit_hash_policy>
+                </litp:bond>
+                <litp:eth id="eth0">
+                  <device_name>eth0</device_name>
+                  <macaddress>%%str_node1_eth0_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth1">
+                  <device_name>eth1</device_name>
+                  <macaddress>%%str_node1_eth1_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:vlan id="vlan_%%VLAN_ID_services%%_services">
+                  <bridge>br0</bridge>
+                  <device_name>bond0.%%VLAN_ID_services%%</device_name>
+                </litp:vlan>
+                <litp:bridge id="br0">
+                  <ipaddress>%%str_node1_IP%%</ipaddress>
+                  <ipv6address>%%str_node1_IPv6%%</ipv6address>
+                  <network_name>services</network_name>
+                  <device_name>br0</device_name>
+                  <multicast_snooping>0</multicast_snooping>
+                </litp:bridge>
+              </litp:node-network_interfaces-collection>
+              <litp:node-routes-collection id="routes">
+                <litp:route-inherit id="services_gateway_route" source_path="/infrastructure/networking/routes/services_gateway_route"/>
+              </litp:node-routes-collection>
+              <litp:blade-inherit id="system" source_path="/infrastructure/systems/str-1_system"/>
+            </litp:node>
+            <litp:node id="str-3">
+              <hostname>%%str_node3_hostname%%</hostname>
+              <litp:node-network_interfaces-collection id="network_interfaces">
+                <litp:bond id="bond0">
+                  <bridge>br0</bridge>
+                  <device_name>bond0</device_name>
+                  <miimon>100</miimon>
+                  <mode>4</mode>
+                  <xmit_hash_policy>layer3+4</xmit_hash_policy>
+                  <network_name>services</network_name>
+                </litp:bond>
+                <litp:eth id="eth0">
+                  <device_name>eth0</device_name>
+                  <macaddress>%%str_node1_eth0_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                </litp:eth>
+                <litp:eth id="eth1">
+                  <device_name>eth1</device_name>
+                  <macaddress>%%str_node1_eth1_macaddress%%</macaddress>
+                  <master>bond0</master>
+                  <rx_ring_buffer>4096</rx_ring_buffer>
+                  <tx_ring_buffer>4096</tx_ring_buffer>
+                  <txqueuelen>10000</txqueuelen>
+                  <network_name>internal</network_name>
+                </litp:eth>
+              </litp:node-network_interfaces-collection>
+            </litp:node>
+            <litp:node id="str-4">
+              <hostname>%%str_node4_hostname%%</hostname>
+              <litp:node-network_interfaces-collection id="network_interfaces">
+                <litp:bridge id="br0">
+                  <ipaddress>%%svc_node4_IP_internal%%</ipaddress>
+                  <network_name>internal</network_name>
+                  <device_name>br0</device_name>
+                </litp:bridge>
+                <litp:eth id="eth0">
+                  <device_name>eth0</device_name>
+                  <macaddress>%%str_node4_eth0_macaddress%%</macaddress>
+                  <bridge>br0</bridge>
+                </litp:eth>
+                <litp:eth id="eth1">
+                  <device_name>eth1</device_name>
+                  <macaddress>%%str_node4_eth1_macaddress%%</macaddress>
+                  <network_name>services</network_name>
+                </litp:eth>
+              </litp:node-network_interfaces-collection>
+            </litp:node>
+          </litp:cluster-nodes-collection>
+          <litp:cluster-services-collection id="services"/>
+          <litp:cluster-software-collection id="software"/>
+          <llt_nets>heartbeat1,heartbeat2</llt_nets>
+        </litp:vcs-cluster>
+      </litp:deployment-clusters-collection>
+    </litp:deployment>
+  </litp:root-deployments-collection>
+  <litp:infrastructure id="infrastructure">
+    <litp:networking id="networking">
+      <litp:networking-networks-collection id="networks">
+        <litp:network id="services_network">
+          <litp_management>false</litp_management>
+          <name>services</name>
+          <subnet>%%ENMservices_subnet%%</subnet>
+        </litp:network>
+        <litp:network id="storage_network">
+          <litp_management>false</litp_management>
+          <name>storage</name>
+          <subnet>%%storage_subnet%%</subnet>
+        </litp:network>
+        <litp:network id="backup_network">
+          <litp_management>false</litp_management>
+          <name>backup</name>
+          <subnet>%%backup_subnet%%</subnet>
+        </litp:network>
+        <litp:network id="internal_network">
+          <litp_management>true</litp_management>
+          <name>internal</name>
+          <subnet>%%internal_subnet%%</subnet>
+        </litp:network>
+        <litp:network id="jgroups_network">
+          <litp_management>false</litp_management>
+          <name>jgroups</name>
+          <subnet>%%jgroups_subnet%%</subnet>
+        </litp:network>
+        <litp:network id="heartbeat1_network">
+          <litp_management>false</litp_management>
+          <name>heartbeat1</name>
+        </litp:network>
+        <litp:network id="heartbeat2_network">
+          <litp_management>false</litp_management>
+          <name>heartbeat2</name>
+        </litp:network>
+      </litp:networking-networks-collection>
+      <litp:networking-routes-collection id="routes">
+        <litp:route id="services_gateway_route">
+          <gateway>%%ENMservices_gateway%%</gateway>
+          <subnet>0.0.0.0/0</subnet>
+        </litp:route>
+      </litp:networking-routes-collection>
+    </litp:networking>
+    <litp:infrastructure-systems-collection id="systems">
+      <litp:blade id="str-1_system">
+        <system_name>str-1</system_name>
+        <litp:system-controllers-collection id="controllers"/>
+        <litp:system-disks-collection id="disks">
+          <litp:disk id="boot_disk">
+            <bootable>true</bootable>
+            <disk_part>false</disk_part>
+            <name>sda</name>
+            <size>450G</size>
+            <uuid>%%str_node1_bootdisk_uuid%%</uuid>
+          </litp:disk>
+        </litp:system-disks-collection>
+        <litp:bmc id="bmc">
+          <ipaddress>%%str_node1_ilo_IP%%</ipaddress>
+          <password_key>key-for-str_node1_ilo</password_key>
+          <username>%%str_node1_iloUsername%%</username>
+        </litp:bmc>
+      </litp:blade>
+    </litp:infrastructure-systems-collection>
+  </litp:infrastructure>
+  <litp:ms id="ms">
+    <litp:ms-network_interfaces-collection id="network_interfaces">
+      <litp:eth id="eth0">
+        <device_name>eth0</device_name>
+        <network_name>internal</network_name>
+        <ipaddress>%%LMS_IP_internal%%</ipaddress>
+      </litp:eth>
+      <litp:eth id="eth1">
+        <device_name>eth1</device_name>
+        <network_name>services</network_name>
+        <ipaddress>%%LMS_IP_services%%</ipaddress>
+      </litp:eth>
+    </litp:ms-network_interfaces-collection>
+  </litp:ms>
+</litp:root>

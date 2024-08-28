@@ -1,0 +1,214 @@
+# ********************************************************************
+# Ericsson LMI                                    SCRIPT
+# ********************************************************************
+# (c) Ericsson LMI 2018 - All rights reserved.
+# The copyright to the computer program(s) herein is the property of
+# Ericsson LMI. The programs may be used and/or copied only with the
+# written permission from Ericsson LMI or in accordance with the terms
+# and conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: see ../pom.xml\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-08 14:55+0100\n"
+"PO-Revision-Date: 2018-03-08 14:55+ZONE\n"
+"Language-Team: Ericsson\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
+"Last-Translator: Ericsson\n"
+
+msgid "ERROR_PROCESSING_COMMAND"
+msgstr "Error processing command {0}: '{1}' '{2}'."
+
+msgid "TIMEOUT_OUT_COMMAND"
+msgstr "Timed out running command: \"{0}\""
+
+msgid "VIRTUAL_ENVIRONMENT_DETECTED"
+msgstr "Virtual environment detected. Skipping {0}."
+
+msgid "FAILED_TO_RUN_COMMAND"
+msgstr "Failed to run {0} command."
+
+msgid "FAILED_TO_RUN_MCO_ACTION"
+msgstr "Failed to run MCO enminst agent action {0}: {1}"
+
+msgid "CHECKING_MODEL_SYCHRONIZED_WITH_DEPLOYMENT"
+msgstr "Checking LITP model is synchronized with the deployed system. This takes several minutes to complete"
+
+msgid "MODEL_SYNCHRONIZED"
+msgstr "The LITP model is synchronized with the deployed system."
+
+msgid "MODEL_NOT_SYNCHRONIZED"
+msgstr "LITP model synchronized check failed: The LITP model is not synchronized with the deployed system."
+
+msgid "CHECKING_FOR_MOUNTED_IMAGE"
+msgstr "Checking for ISO image mounted to {0} and unmounting if present"
+
+msgid "MOUNT_DIRECTORY_NOT_USED"
+msgstr "{0} is not used as a mount directory to mount an ISO image. No action necessary."
+
+msgid "MOUNT_DIRECTORY_IS_USED"
+msgstr "{0} is used as a mount directory. Do you want to unmount the ISO image?"
+
+msgid "SUCCESSFULLY_UNMOUNTED"
+msgstr "{0} successfully unmounted."
+
+msgid "NESTED_MOUNTS_FOUND"
+msgstr "A subdirectory of {0} is used as a nested mount directory. Unmount manually."
+
+msgid "DIRECTORY_NOT_EMPTY"
+msgstr "Directory {0} is not empty. The contents should be manually removed."
+
+msgid "UNMOUNT_MANUALLY"
+msgstr "Unmount aborted. Unmount the ISO image manually and run the {0} action again."
+
+msgid "DEACTIVATING_OMBS_BACKUP"
+msgstr "Deactivating OMBS backup"
+
+msgid "OMBS_CONF_ERROR"
+msgstr "Error reading OMBS configuration in {0}: {1}."
+
+msgid "OMBS_BACKUP_IS_INACTIVE"
+msgstr "OMBS backup is already deactivated. No action necessary."
+
+msgid "OMBS_BACKUP_DEACTIVATED"
+msgstr "OMBS backup is deactivated successfully."
+
+msgid "ERROR_WHILE_DEACTIVATING_OMBS_BACKUP"
+msgstr "An error occurred deactivating the OMBS backup. Investigate manually."
+
+msgid "OMBS_BACKUP_SET_OWNER_FAILED"
+msgstr "Failed to set the user and group ownership on file {0}"
+
+msgid "CHECKING_OPENDJ_REPLICATION"
+msgstr "Checking OpenDJ replication"
+
+msgid "OPENDJ_NOT_ONLINE_ON_TWO_NODES"
+msgstr "OpenDJ is not online on two DB nodes. Issue must be fixed before continuing with the ENM upgrade. Please refer to Step 2 of the 'Check the OpenDJ Version, Database Status, Size and Details' topic, in the 'OpenDJ Administration Tasks' chapter of the ENM SAG."
+
+msgid "OPENDJ_PASSWORD_CANNOT_BE_RETRIEVED"
+msgstr "OpenDJ password cannot be retrieved from {0}. Investigate manually."
+
+msgid "OPENDJ_LDAP_ROOT_CANNOT_BE_RETRIEVED"
+msgstr "OpenDJ LDAP-root cannot be retrieved from {0}. Investigate manually."
+
+msgid "OPENDJ_REPL_NODES_NOT_FOUND"
+msgstr "OpenDJ replication nodes not found."
+
+msgid "REFER_TO_OPENDJ_SECTION_OF_GUIDE"
+msgstr ". Refer to the chapter 'Recover from OpenDJ Replication Issues' in the Troubleshooting section of the ENM Upgrade Guide."
+
+msgid "MISMATCH_IN_NUMBER_OF_OPENDJ_ENTRIES"
+msgstr "Mismatch in number of entries in OpenDJ replication across the two nodes"
+
+msgid "REPLICATION_NOT_ENABLED_ON_BOTH_NODES"
+msgstr "Replication is not enabled in both OpenDJ nodes"
+
+msgid "MC_IS_NOT_ZERO_ON_BOTH_NODES"
+msgstr "M.C is not zero in both OpenDJ nodes"
+
+msgid "OPENDJ_REPLICATION_INTACT"
+msgstr "OpenDJ replication is intact."
+
+msgid "CHECKING_ELASTICSEARCH"
+msgstr "Checking Elasticsearch status and indexes"
+
+msgid "ELASTICSEARCH_IS_RUNNING"
+msgstr "Elasticsearch is running on node {0}."
+
+msgid "REFER_TO_ELASTICSEARCH_BUR_SAG"
+msgstr " Refer to the 'ElasticSearch Service Fails' topic of the Troubleshooting chapter of the 'ENM Backup and Restore System Administrators Guide' for information on how to correct this issue."
+
+msgid "ELASTICSEARCH_STATUS_CHECK_FAILED"
+msgstr "Elasticsearch status check failed. Rectify the status of Elasticsearch before continuing with the upgrade."
+
+msgid "ELASTICSEARCH_INDEXES_ARE_HEALTHY"
+msgstr "All Elasticsearch indexes are healthy. No action necessary."
+
+msgid "ELASTICSEARCH_INDEXES_ARE_CORRUPTED"
+msgstr "{0} {1} in an unhealthy state. Investigate manually."
+
+msgid "CHECKING_ELASTICSEARCH_INDEXES"
+msgstr "Checking for corrupted Elasticsearch indexes."
+
+msgid "COULD_NOT_RETRIEVE_HEALTH_OF_ELASTICSEARCH_INDEXES"
+msgstr "An error occurred while retrieving the health of Elasticseach indexes."
+
+msgid "CHECKING_DISK_STORAGE"
+msgstr "Checking storage setup on db nodes"
+
+msgid "NO_DB_SVC_SYSTEMS_FOUND"
+msgstr "No DB systems found. Skipping {0}."
+
+msgid "BOOT_PARTITION_NOT_AVAILABLE"
+msgstr "/boot partition is not available on node {0}. Proceeding with recovery."
+
+msgid "BOOT_PARTITION_AVAILABLE"
+msgstr "/boot partition available on node {0}. Proceeding with check."
+
+msgid "BOOT_PARTITION_REMAINS_UNAVAILABLE"
+msgstr "/boot partition remains unavailable on node {0} after attempted remount."
+
+msgid "CORRUPTED_PROPERTIES_FILE"
+msgstr "{0} file on node {1} is invalid (0 or >1 global_filter entries). Investigate manually."
+
+msgid "CONFIG_FILE_IS_COMPLETE"
+msgstr "{0} is complete on node {1}. No action necessary."
+
+msgid "CONFIG_FILE_SUCCESSFULLY_UPDATED"
+msgstr "{0} file successfully updated on node {1} to blacklist sd.* devices."
+
+msgid "PVSCAN_COMPARISON_CORRECT"
+msgstr "{0} successfully updated on node {1}."
+
+msgid "PVSCAN_COMPARISON_FAILED"
+msgstr "Error in {0} on node {1}. Restore the backup of {2} on {3}."
+
+msgid "CONFIG_FILE_NOT_IN_CORRECT_FORMAT"
+msgstr "{0} is not in standard format on node {1}. Check the file on {1} manually."
+
+msgid "NON_MULTIPATHED_VOLUMES_PRESENT"
+msgstr "There are non-multipathed volumes on node {0}. VCS must be stopped and server rebooted. Proceed?"
+
+msgid "REBOOTING_AND_WAITING_TWO_MINUTES"
+msgstr "Rebooting node {0} and waiting for 2 minutes ..."
+
+msgid "REBOOT_FAILURE"
+msgstr "node {0} is not serviceable after a reboot. Please manually reboot the node."
+
+msgid "ERRORS_IN_VOLUME_MULTIPATHING"
+msgstr "There are issues with volume multipathing on node {0}. Investigate manually."
+
+msgid "LVM_MULTIPATH_CORRECTLY_SETUP"
+msgstr "LVM multipath setup is correct on node {0}."
+
+msgid "NO_ACTION_REQUIRED_FOR_LVM_MULTIPATHING"
+msgstr "LVM multipath setup is correct on node {0}. No further actions required."
+
+msgid "ALL_PRECHECKS_SUCCESS"
+msgstr "Successfully Completed ENM Upgrade Prechecks"
+
+msgid "DP_CHECKING_ENM_VERSION"
+msgstr "Checking the ENM ISO version from /etc/enm-version"
+
+msgid "DP_CHECKING_ENM_VERSION_COMPLETED"
+msgstr "Completed the check of the ENM ISO version."
+
+msgid "DP_ERROR_WHILE_CHECKING_ENM_VERSION"
+msgstr "An error occurred when checking the ENM ISO version from /etc/enm-version."
+
+msgid "DP_CONF_SEED_FILE_DOES_EXIST"
+msgstr "The file {0} does exist. We may need to remove this file before upgrade."
+
+msgid "DP_CONF_SEED_FILE_DOES_NOT_EXIST"
+msgstr "The file {0} does not exist. There is nothing to do here."
+
+msgid "DP_RETAIN_CONF_SEED_FILE"
+msgstr "Will retain {0} because the current ENM version {1} is equal to or greater than the cutoff ENM version {2} or enm_deployment_type is not of type Rack"
+
+msgid "DP_REMOVE_CONF_SEED_FILE"
+msgstr "Will remove {0} because the current ENM version {1} is lower than the cutoff ENM version {2} and enm_deployment_type is of type Rack"

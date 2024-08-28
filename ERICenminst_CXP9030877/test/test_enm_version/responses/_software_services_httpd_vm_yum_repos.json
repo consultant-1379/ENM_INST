@@ -1,0 +1,90 @@
+{
+    "_embedded": {
+        "item": [
+            {
+                "properties": {
+                    "base_url": "http://10.160.0.9/ENM_services_rhel7/", 
+                    "name": "services"
+                }, 
+                "item-type-name": "vm-yum-repo", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_yum_repos/services"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-yum-repo"
+                    }
+                }, 
+                "id": "services"
+            }, 
+            {
+                "properties": {
+                    "base_url": "http://10.160.0.9/6/os/x86_64/Packages/", 
+                    "name": "OS"
+                }, 
+                "item-type-name": "vm-yum-repo", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_yum_repos/OS"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-yum-repo"
+                    }
+                }, 
+                "id": "OS"
+            }, 
+            {
+                "properties": {
+                    "base_url": "http://10.160.0.9/ENM_common_rhel7/", 
+                    "name": "common"
+                }, 
+                "item-type-name": "vm-yum-repo", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_yum_repos/common"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-yum-repo"
+                    }
+                }, 
+                "id": "common"
+            }, 
+            {
+                "properties": {
+                    "base_url": "http://10.160.0.9/6/updates/x86_64/Packages/", 
+                    "name": "UPDATES"
+                }, 
+                "item-type-name": "vm-yum-repo", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_yum_repos/UPDATES"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-yum-repo"
+                    }
+                }, 
+                "id": "UPDATES"
+            }
+        ]
+    }, 
+    "item-type-name": "collection-of-vm-yum-repo", 
+    "applied_properties_determinable": true, 
+    "state": "Applied", 
+    "_links": {
+        "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_yum_repos"
+        }, 
+        "collection-of": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-yum-repo"
+        }
+    }, 
+    "id": "vm_yum_repos"
+}

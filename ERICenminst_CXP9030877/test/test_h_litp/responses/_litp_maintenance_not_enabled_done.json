@@ -1,0 +1,18 @@
+{
+  "item-type-name": "maintenance",
+  "applied_properties_determinable": true,
+  "_links": {
+    "self": {
+      "href": "https://localhost:9999/litp/rest/v1/litp/maintenance"
+    },
+    "item-type": {
+      "href": "https://localhost:9999/litp/rest/v1/item-types/maintenance"
+    }
+  },
+  "properties": {
+    "status": "Done",
+    "initiator": "import_iso",
+    "enabled": "false"
+  },
+  "id": "maintenance"
+}

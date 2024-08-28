@@ -1,0 +1,409 @@
+{ "_embedded": { "item": [
+            {
+                "item-type-name": "collection-of-phase",
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases"
+                    },
+                    "collection-of": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                    }
+                },
+                "_embedded": {
+                    "item": [
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Lock VCS on node \"node1\"",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1/tasks/fb51f282-d366-4f33-9d74-7b3d7a22f234"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n1"
+                                                        }
+                                                    },
+                                                    "id": "fb51f282-d366-4f33-9d74-7b3d7a22f234",
+                                                    "call_type": "lock_node"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 1
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/2"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/2/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Remove package \"telnet\" on node \"node1\"",
+                                                    "call_id": "telnet",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/2/tasks/d58391a0-43bb-4aab-b38b-a1d7e776eb4c"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n1/items/telnet"
+                                                        }
+                                                    },
+                                                    "id": "d58391a0-43bb-4aab-b38b-a1d7e776eb4c",
+                                                    "call_type": "package"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 2
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/3"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/3/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Unlock VCS on node \"node1\"",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/3/tasks/bb72ff1b-a121-4dad-9069-9088f6069539"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n1"
+                                                        }
+                                                    },
+                                                    "id": "bb72ff1b-a121-4dad-9069-9088f6069539",
+                                                    "call_type": "unlock_node"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 3
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/4"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/4/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Lock VCS on node \"node2\"",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/4/tasks/5a2d534c-3759-45e2-96d9-34c8dfdcbde6"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n2"
+                                                        }
+                                                    },
+                                                    "id": "5a2d534c-3759-45e2-96d9-34c8dfdcbde6",
+                                                    "call_type": "lock_node"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 4
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/5"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/5/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Remove package \"telnet\" on node \"node2\"",
+                                                    "call_id": "telnet",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/5/tasks/fd3970aa-d774-46d5-bac0-88caa95d80b5"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n2/items/telnet"
+                                                        }
+                                                    },
+                                                    "id": "fd3970aa-d774-46d5-bac0-88caa95d80b5",
+                                                    "call_type": "package"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 5
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/6"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/6/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Unlock VCS on node \"node2\"",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/6/tasks/d2e8d91c-3884-403a-8af3-8ee53f2483ae"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/deployments/d1/clusters/c1/nodes/n2"
+                                                        }
+                                                    },
+                                                    "id": "d2e8d91c-3884-403a-8af3-8ee53f2483ae",
+                                                    "call_type": "unlock_node"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 6
+                        },
+                        {
+                            "item-type-name": "phase",
+                            "_links": {
+                                "self": {
+                                    "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/7"
+                                },
+                                "item-type": {
+                                    "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+                                }
+                            },
+                            "_embedded": {
+                                "item": [
+                                    {
+                                        "item-type-name": "collection-of-task",
+                                        "_links": {
+                                            "self": {
+                                                "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/7/tasks"
+                                            },
+                                            "collection-of": {
+                                                "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                            }
+                                        },
+                                        "_embedded": {
+                                            "item": [
+                                                {
+                                                    "description": "Remove Item",
+                                                    "item-type-name": "task",
+                                                    "state": "Initial",
+                                                    "_links": {
+                                                        "self": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/7/tasks/37ee85e4-ad20-4597-988e-c6c45072007c"
+                                                        },
+                                                        "item-type": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                                                        },
+                                                        "rel": {
+                                                            "href": "https://localhost:9999/litp/rest/v1/software/items/telnet"
+                                                        }
+                                                    },
+                                                    "id": "37ee85e4-ad20-4597-988e-c6c45072007c",
+                                                    "call_type": "cleanup"
+                                                }
+                                            ]
+                                        },
+                                        "id": "tasks"
+                                    }
+                                ]
+                            },
+                            "id": 7
+                        }
+                    ]
+                },
+                "id": "phases"
+            }
+        ]
+    },
+    "plan_phase_tree": {
+        "required_phases": {
+            "1": [
+                0
+            ],
+            "0": [],
+            "3": [
+                2
+            ],
+            "2": [
+                1
+            ],
+            "5": [
+                4
+            ],
+            "4": [
+                3
+            ],
+            "6": [
+                5
+            ]
+        }
+    },
+    "id": "plan",
+    "item-type-name": "plan",
+    "snapshot": "A snapshot of the deployment was completed on Wed Nov  2 07:47:08 2016",
+    "_links": {
+        "self": {
+            "href": "https://localhost:9999/litp/rest/v1/plans/plan"
+        },
+        "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/plan"
+        }
+    },
+    "properties": {
+        "state": "initial"
+    }
+}

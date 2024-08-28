@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<litp:root xmlns:litp="http://www.ericsson.com/litp" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ericsson.com/litp litp--schema/litp.xsd" id="root">
+  
+  <litp:infrastructure id="infrastructure">
+    <litp:infrastructure-items-collection id="items"/>
+      <litp:storage id="storage">  
+         <litp:storage-storage_profiles-collection id="storage_profiles">
+          <litp:storage-profile id="db_node_storage_profile">
+          <litp:storage-profile-volume_groups-collection id="volume_groups">
+            <litp:volume-group id="vg1">
+              <volume_group_name>vg_root</volume_group_name>
+              <litp:volume-group-file_systems-collection id="file_systems">
+                <litp:file-system id="lv_var">
+                  <mount_point>/var</mount_point>
+                  <size>50G</size>
+                  <snap_size>40</snap_size>
+                  <type>ext4</type>
+                </litp:file-system>
+              </litp:volume-group-file_systems-collection>
+              <litp:volume-group-physical_devices-collection id="physical_devices">
+                <litp:physical-device id="internal">
+                  <device_name>sda</device_name>
+                </litp:physical-device>
+              </litp:volume-group-physical_devices-collection>
+            </litp:volume-group>
+          </litp:storage-profile-volume_groups-collection>
+        </litp:storage-profile> 
+       </litp:storage-storage_profiles-collection>
+      </litp:storage>
+  </litp:infrastructure>
+</litp:root>

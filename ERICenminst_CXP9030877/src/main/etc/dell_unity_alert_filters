@@ -1,0 +1,36 @@
+# This file contains the message IDs of Dell EMC Unity storage alerts
+# that do not have CRITICAL severity but should be raised as critical
+# ENM FM alarms by the ENMinst SAN fault checker script san_fault_check.py.
+
+# These are in addition to CRITICAL severity Unity alerts which are always
+# raised as critical ENM FM alarms.
+
+# A Unity alert message ID identifies the alert in the Unity message
+# catalog and is used for localization purposes.
+
+# Format:
+# One Unity alert message ID per line.
+# Message IDs commented out with '#' are skipped.
+# Before each message ID, add an example of the corresponding alert message
+# text as a comment line. For information only.
+
+# Example: "FSN port SP A FSN Port Ocp 0 1 link is down."
+14:60ed9
+
+# Example: "Port SP A 4-Port Card Ethernet Port 1 link is down"
+14:60580
+
+# Example: "Configured Port SP A 4-Port Card Ethernet Port 1 link is down"
+14:60594
+
+# Example: "SP A 4-Port Card is missing"
+14:603f3
+
+# Example: "Unable to detect Ethernet port or link aggregation for the network interface 192.168.0.5 configured on NAS server nas01"
+14:603c2
+
+# Example: "The used space of a filesystem fs_name under the NAS server nas_name in the system system_name is over 95% full"
+14:600ff
+
+# Example: "System system_name has experencied one or more problems that have resulted in a degraded state"
+14:60515

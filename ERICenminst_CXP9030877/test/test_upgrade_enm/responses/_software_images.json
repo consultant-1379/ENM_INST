@@ -1,0 +1,54 @@
+{
+  "_embedded": {
+    "item": [
+      {
+        "id": "rhel7-jboss-image",
+        "item-type-name": "vm-image",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/images/rhel7-jboss-image"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-image"
+          }
+        },
+        "properties": {
+          "source_uri": "http://192.168.0.42/images/ENM/ERICrhel79jbossimage_CXP9041916-1.9.1.qcow2",
+          "name": "rhel7-jboss-image"
+        }
+      },
+      {
+        "id": "rhel7-lsb-image",
+        "item-type-name": "vm-image",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/images/rhel7-lsb-image"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-image"
+          }
+        },
+        "properties": {
+          "source_uri": "http://192.168.0.42/images/ENM/ERICrhel79lsbimage_CXP9041915-1.9.1.qcow2",
+          "name": "rhel7-lsb-image"
+        }
+      }
+    ]
+  },
+  "item-type-name": "collection-of-image-base",
+  "applied_properties_determinable": true,
+  "state": "Applied",
+  "_links": {
+    "self": {
+      "href": "https://localhost:9999/litp/rest/v1/software/images"
+    },
+    "collection-of": {
+      "href": "https://localhost:9999/litp/rest/v1/item-types/image-base"
+    }
+  },
+  "id": "images"
+}

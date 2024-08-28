@@ -1,0 +1,137 @@
+{
+    "_embedded": {
+        "item": [
+            {
+                "id": "shmui", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/shmui"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICshmui_CXP9030799"
+                }
+            }, 
+            {
+                "id": "nodemonitorapp", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/nodemonitorapp"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICnodemonitorapp_CXP9031781"
+                }
+            }, 
+            {
+                "id": "networkhealthmonitorclient", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/networkhealthmonitorclient"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICnetworkhealthmonitorclient_CXP9031434"
+                }
+            }, 
+            {
+                "id": "alarmcontroldisplaygui", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/alarmcontroldisplaygui"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICalarmcontroldisplaygui_CXP9031026"
+                }
+            }, 
+            {
+                "id": "kpimanagementapp", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/kpimanagementapp"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICkpimanagementapp_CXP9031735"
+                }
+            }, 
+            {
+                "id": "httpd_pkg", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/httpd_pkg"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICenmsghttpd_CXP9031596"
+                }
+            }, 
+            {
+                "id": "multinodehealthmonitorapp", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages/multinodehealthmonitorapp"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICmultinodehealthmonitorapp_CXP9031838"
+                }
+            }
+        ]
+    }, 
+    "item-type-name": "collection-of-vm-package", 
+    "applied_properties_determinable": true, 
+    "state": "Applied", 
+    "_links": {
+        "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/httpd/vm_packages"
+        }, 
+        "collection-of": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+        }
+    }, 
+    "id": "vm_packages"
+}

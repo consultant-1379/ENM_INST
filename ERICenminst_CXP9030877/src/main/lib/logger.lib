@@ -1,0 +1,105 @@
+#!/bin/bash
+# ********************************************************************
+# Ericsson LMI                                    SCRIPT
+# ********************************************************************
+#
+# (c) Ericsson LMI 2014 - All rights reserved.
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson LMI. The programs may be used and/or copied only  with the
+# written permission from Ericsson LMI or in accordance with the terms
+# and conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#
+# ********************************************************************
+# Name    : logger.lib
+# Purpose : Functions for log setup using logger activity of script
+#
+# Usage   : source logger.lib
+#
+# ********************************************************************
+
+
+# SET DIRECTORY PATH
+# ------------------
+READ_LINK=$(/bin/readlink -f ${BASH_SOURCE[0]})
+UTIL_LIB=$(/usr/bin/dirname ${READ_LINK})
+LOG__LEVEL_CMD="/var/tmp/.enm__log__level"
+export ENM_INI="/opt/ericsson/enminst/etc/enminst_cfg.ini"
+valid_log_level=(warning err info debug)
+ARG1=$1
+# FUNCTIONS
+# ---------
+
+### Function: logger.config ###
+#
+# This function  setup the logger for a local which will be used to log enminst logging. configure rsyslog. 
+# This will restart rsyslogd service
+#
+#   Arguments:
+#       1 - log file path and name, default is /var/log/enminst.log
+#
+#   Return Values:
+#       0 - If Success
+#       1 - If Failed
+#
+function logger.config() {
+  unset STR _log_file_ set_log_level logger
+  _log_level_=$(misc_iniget ENM_INST_CONFIG ${ENM_INI} LOG_LEVEL)
+  _log_level_=${_log_level_:-info}
+  _log_file_=$(misc_iniget ENM_INST_CONFIG ${ENM_INI} LOG_FILE_NAME)
+  _log_file_=${_log_file_:-/var/log/enminst.log}; export _log_file_;
+  _logger_tag_=$(misc_iniget ENM_INST_CONFIG ${ENM_INI} LOG_TAG)
+  _logger_tag_=${_logger_tag_:-ENM_INSTALL}; export _logger_tag_
+  [[ "${ARG1}" == "-v" ]] && _log_level_="debug"
+  echo "${_log_file_}" > /tmp/.enm_log_file 2> /dev/null
+  _log_2_term_="-s"
+  export logger=local1
+  llfound="false"; ctr=0
+  for ll in ${valid_log_level[@]}; do
+    set_log_level[${ctr}]=${logger}.${ll}
+    ctr=$((ctr+1))
+    [[ "${ll}" == "${_log_level_}" ]] && { llfound="true"; break; }
+  done
+  [[ "${llfound}" != "true" ]] && { /usr/bin/logger -s "[ERROR] - Un-Supported log level."; return 9; }
+  local _logf_name_=$(/bin/basename ${_log_file_})
+  local _logfname_=${_logf_name_%.*}.conf
+  export STR=$(echo ${set_log_level[@]} | /usr/bin/tr -s " " ";")
+  echo "${STR}                                                ${_log_file_}" > /etc/rsyslog.d/${_logfname_}
+  _log_dir_=$(/usr/bin/dirname ${_log_file_}); [[ ! -d "${_log_dir_}" ]] && /bin/mkdir -p ${_log_dir_} 2> /dev/null
+  /bin/touch ${_log_file_}
+  /usr/bin/perl -ni -e 'print unless /LOG_INIT:\s+Initializing LOG/' /var/log/enminst.log ${_log_file_} > /dev/null 2>&1
+  /sbin/service rsyslog stop > /dev/null 2>&1; /sbin/service rsyslog start > /dev/null 2>&1
+  /usr/bin/logger -p ${logger}.${_log_level_,,} -t LOG_INIT "Initializing LOG [Log Level:${_log_level_}]"; _ret_=$?
+  /bin/egrep "Initializing LOG" ${_log_file_} > /dev/null 2>&1; _ret_=$?
+  [[ ${_ret_} -ne 0 ]] && { echo "[ERROR] logger not setup as expected."; return 9; }
+  _log_cmd_="/usr/bin/logger -p ${logger}."
+  export _log_cmd_; unset logger;
+  return ${_ret_:-0}
+}
+
+#Log INFO message
+function logger.info() { _msg_=$1 ; ${_log_cmd_}info -t ${_logger_tag_} ${_log_2_term_} "[INFO] $_msg_"; }
+#Log WARN message
+function logger.warn() { _msg_=$1 ; ${_log_cmd_}warning -t ${_logger_tag_} ${_log_2_term_} "[WARNING] $_msg_"; }
+#Log WARN message, from the man page of logger - [warn (deprecated synonym for warning)]
+function logger.warning() { _msg_=$1 ; ${_log_cmd_}warning -t ${_logger_tag_} ${_log_2_term_} "[WARNING] $_msg_"; }
+#Log ERROR message and exit from the man page of logger - [ error (deprecated synonym for err)]
+function logger.error() { _msg_=$1; ${_log_cmd_}err -t ${_logger_tag_} ${_log_2_term_} "[ERROR] $_msg_"; exit 9; }
+#Log DEBUG message, debug will not disply on SCREEN/TERM only in the log
+function logger.debug() { _msg_=$1; ${_log_cmd_}debug -t ${_logger_tag_} "[DEBUG] $_msg_"; }
+#return the current trace level.
+function logger.get_log_level() { echo "${_log_level_}"; return 0; }
+#return the name if the logfile used by logger in current condifuration.
+function logger.get_logfile_name() { echo "${_log_file_}"; return 0; }
+#function to add the output of other script/process in same one log.
+function logger.append_2_log() {
+  Fname=$1
+  [[ ! -f "${Fname}" ]] && logger.warn "File not found [${Fname}]" || { _log_file_=$(/bin/cat /tmp/.enm_log_file 2> /dev/null); /bin/cat ${Fname} >> ${_log_file_}; }
+}
+if [[ "${ARG1}" == "auto" || "${ARG1}" == "-v" ]]; then
+  echo "Initializing log. Please wait."
+  logger.config
+fi
+
+

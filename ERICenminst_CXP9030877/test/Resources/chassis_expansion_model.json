@@ -1,0 +1,42 @@
+{
+    "svc-2": {
+        "dest_ilo": "10.141.5.66",
+        "hostname": "ieatrcxb5483",
+        "src_bay": "10",
+        "src_ilo": "10.141.5.49",
+        "dest_bay": "Unknown",
+        "serial": "CZ3702A3WX"
+    },
+    "db-2": {
+        "dest_ilo": "10.141.5.64",
+        "hostname": "ieatrcxb5271",
+        "src_bay": "9",
+        "src_ilo": "10.141.5.48",
+        "dest_bay": "Unknown",
+        "serial": "CZ36092PBA"
+    },
+    "svc-4": {
+        "dest_ilo": "10.141.5.67",
+        "hostname": "ieatrcxb5485",
+        "src_bay": "11",
+        "src_ilo": "10.141.5.50",
+        "dest_bay": "Unknown",
+        "serial": "CZ35294PAT"
+    },
+    "svc-6": {
+        "dest_ilo": "10.141.5.68",
+        "hostname": "ieatrcxb4856",
+        "src_bay": "12",
+        "src_ilo": "10.141.5.51",
+        "dest_bay": "Unknown",
+        "serial": "CZ35294PAY"
+    },
+    "scp-2": {
+        "dest_ilo": "10.141.5.65",
+        "hostname": "ieatrcxb4959",
+        "src_bay": "13",
+        "src_ilo": "10.141.5.52",
+        "dest_bay": "Unknown",
+        "serial": "CZ3542KBRW"
+    }
+}

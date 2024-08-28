@@ -1,0 +1,59 @@
++----------------------------+
+Relevant pom.xml Do(s) and DO Don't(s)
++----------------------------+
+
+Do(s)
+================================
+
+DO use inheritance and integration pom.xml
+DO use ${project.version}
+
+Don't(s)
+================================
+
+DO NOT change the groupId/artifactId ...
+
+CXP Module
+================================
+A valid CXP number must be used, if you want to release you project.
+To change the CXP number search for 1234567 in your poms and change it
+to the appropriate CXP number, which can be requested from TOR CI EXECUTION TEAM.
+
+COMMAND TO CHANGE THE CXP NUMBER:
+find . -name pom.xml -exec sed -i "s/old cxp/new cxp/g" {} \;
+and alsso change the cxp number from the cxp module folder just under your root directory
+of this project.  
+
++----------------------------+
+BUILDING
++----------------------------+
+
+- By default build is for devel-environment (no LITP specific implementation modules)
+- For production environment you should do a build with activated 'production' profile (mvn clean install -P production_env)
+(Please check pom.xml in /ear/ submodule
+
+
+
++----------------------------+
+DEPLOYING TO JBOSS
++----------------------------+
+
+System property JBOSS_HOME should point to the installation folder of JBoss.
+
+Once you started JBoss you have to execute mvn jboss-as:deploy to deploy service
+
+
++----------------------------+
+LINKS FOR MORE USEFUL INFO.
++----------------------------+
+
+TOR CI Execution Main Confluence Page
+=================================
+
+http://confluence-oss.lmera.ericsson.se/display/CIE/CI+Execution
+
+Getting Started with CI
+================================
+
+http://confluence-oss.lmera.ericsson.se/display/CIE/Getting+Started
+

@@ -1,0 +1,27 @@
+{
+  "item-type-name": "collection-of-package",
+  "_links": {
+    "self": {"href": "https://localhost:9999/litp/rest/v1/software/items/model_package/packages"},
+    "collection-of": {"href": "https://localhost:9999/litp/rest/v1/item-types/package"}
+  },
+  "state": "Initial",
+  "_embedded": {
+    "item": [
+      {
+        "item-type-name": "model-package",
+        "state": "Initial",
+        "_links": {
+          "self": {"href": "https://localhost:9999/litp/rest/v1/software/items/model_package/packages/model_68"},
+          "item-type": {"href": "https://localhost:9999/litp/rest/v1/item-types/model-package"}
+        },
+        "id": "model_68",
+        "properties": {
+          "epoch": "0",
+          "name": "ERICsmrsservicemodel_CXP9030970",
+          "repository": "enm_repo"
+        }
+      }
+   ]
+  },
+  "id": "packages"
+}

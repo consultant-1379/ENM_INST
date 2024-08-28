@@ -1,0 +1,14 @@
+amos_1_ipaddress=10.43.250.68
+amos_1_ipv6address=2001:1b70:82a1:013e:0000:2336:5235:003c/64
+amos_1_ip_internal=192.168.2.96
+amos_1_ip_storage=10.140.32.150
+amos_1_ip_jgroups=192.168.1.91
+amos_2_ipaddress=10.43.250.69
+amos_2_ipv6address=2001:1b70:82a1:013e:0000:2336:5235:003d/64
+amos_2_ip_internal=192.168.2.97
+amos_2_ip_storage=10.140.32.151
+amos_2_ip_jgroups=192.168.1.92
+dlms_1_ip_internal=192.168.2.132
+dlms_1_ip_jgroups=192.168.1.122
+dlms_2_ip_internal=192.168.2.133
+dlms_2_ip_jgroups=192.168.1.123

@@ -1,0 +1,37 @@
+#!/bin/bash
+#################################################
+# This script clear all the keys from registerd
+# on the Fencing Disks
+#################################################
+
+DEBUG=1
+. /etc/vxfen.d/script/vxfen_scriptlib.sh
+
+utag=`/bin/date +%Y-%m-%d_%H.%M.%S`
+keys_file=/tmp/vxfendisks.$utag
+
+_have_keys() {
+  local keys=`LC_ALL=C /sbin/vxfenadm -s all -f /etc/vxfentab | grep 'Numeric'`
+  [[ -n "$keys" ]]
+}
+
+if ! _have_keys; then
+	echo "==> No keys founds" 
+else
+	grep -Ev '[\s\t]*\#' /etc/vxfentab | cut -d ' ' -f 1 > $keys_file
+
+	echo "=> Listing keys BEFORE clearing"
+	print_keys_disks "$keys_file" all
+
+	remove_keys_disks "$keys_file" all
+
+	echo "=> Listing keys AFTER clearing"
+	print_keys_disks "$keys_file" all
+
+	if _have_keys; then
+		echo "==> FAILED to cleared the keys"
+		exit 1
+	else
+		echo "==> Successfully cleared the keys"
+	fi
+fi

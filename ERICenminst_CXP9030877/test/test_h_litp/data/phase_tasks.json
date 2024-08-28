@@ -1,0 +1,71 @@
+{
+  "item-type-name": "phase",
+  "_embedded": {
+    "item": [
+      {
+        "item-type-name": "collection-of-task",
+        "_embedded": {
+          "item": [
+            {
+              "description": "description task_1",
+              "call_id": "call_id task_1",
+              "item-type-name": "task",
+              "state": "Initial",
+              "_links": {
+                "self": {
+                  "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1/tasks/task_1"
+                },
+                "item-type": {
+                  "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                },
+                "rel": {
+                  "href": "https://localhost:9999/litp/rest/v1/model/task_1"
+                }
+              },
+              "id": "task_1",
+              "call_type": "call_type::task_1"
+            },
+            {
+              "description": "description task_2",
+              "call_id": "call_id task_2",
+              "item-type-name": "task",
+              "state": "Running",
+              "_links": {
+                "self": {
+                  "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1/tasks/task_12"
+                },
+                "item-type": {
+                  "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+                },
+                "rel": {
+                  "href": "https://localhost:9999/litp/rest/v1/model/task_2"
+                }
+              },
+              "id": "task_2",
+              "call_type": "call_type::task2"
+            }
+          ]
+        },
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1/tasks"
+          },
+          "collection-of": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/task"
+          }
+        },
+        "id": "tasks"
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "href": "https://localhost:9999/litp/rest/v1/plans/plan/phases/1"
+    },
+    "item-type": {
+      "href": "https://localhost:9999/litp/rest/v1/item-types/phase"
+    }
+  },
+  "id": "1",
+  "state": "running"
+}

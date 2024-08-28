@@ -1,0 +1,6 @@
+None,1.76.117
+ERICenmdeploymenttemplates_CXP9031758-None,install,ERICenmdeploymenttemplates_CXP9031758-1.76.12-SNAPSHOT20190612094137,ieatlms5736
+ERICenmdeploymenttemplates_CXP9031758-1.72.1,upgrade,ERICenmdeploymenttemplates_CXP9031758-1.76.12-SNAPSHOT20190612094137,ieatcxp5126
+ERICenmdeploymenttemplates_CXP9031758-1.71.4,upgrade,ERICenmdeploymenttemplates_CXP9031758-1.76.12-SNAPSHOT20190612094137,ieatcxp5986
+ERICenmdeploymenttemplates_CXP9031758-1.71.4,nothing,ERICenmdeploymenttemplates_CXP9031758-1.76.12-SNAPSHOT20190612094137,ieatcxp2321
+ERICenmdeploymenttemplates_CXP9031758-1.71.4,invalid_line,ERICenmdeploymenttemplates_CXP9031758-1.76.12-SNAPSHOT20190612094137

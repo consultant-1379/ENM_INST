@@ -1,0 +1,895 @@
+# ********************************************************************
+# Ericsson LMI                                    SCRIPT
+# ********************************************************************
+#
+# (c) Ericsson LMI 2015 - All rights reserved.
+#
+# The copyright to the computer program(s) herein is the property of
+# Ericsson LMI. The programs may be used and/or copied only  with the
+# written permission from Ericsson LMI or in accordance with the terms
+# and conditions stipulated in the agreement/contract under which the
+# program(s) have been supplied.
+#
+# ********************************************************************
+# Name    : enminst_common_install.lib
+# Date    : 02/02/2015
+# Revision: 0.2
+# Purpose : Various functions used by deploy_enm.sh to carry out
+#           a deployment.
+#
+# Usage   : source enminst_common_install.lib
+#
+# ********************************************************************
+
+function trapped_ctrl_c()
+{
+  _ctrlc_trap_=1
+}
+# ********************************************************************
+#
+# Name      : import_enm_iso
+# Purpose   : Use LITP import command to transfer ENM ISO contents to
+#             ENM repository on the MS.
+#             Also, copy the image files from the ENM ISO to the MS.
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function import_enm_iso() {
+    if [[ ${VERBOSE} == 'true' || ${LOG_LEVEL} == 'DEBUG' ]]; then
+        VERBOSE_OPT='--verbose'
+    fi
+    /usr/bin/python ${ENMINST_LIB}/import_iso.py --iso ${ENM_ISO} ${VERBOSE_OPT}
+}
+
+# ********************************************************************
+#
+# Name      : clean_up_deployment
+# Purpose   : The clean_up_deployment function calls the deployment_teardown.py
+#             script. This script, which should be run with the latest
+#             SED file and clean_all command, will clean up the deployment
+# Parameters: SED file and clean_all command
+# Return Values:
+#             0 - OK
+#             !0 - Not OK
+#
+# ********************************************************************
+function clean_up_deployment() {
+    log_header INFO "Cleanup ENM Deployment"
+    log INFO "Cleaning up previous installation"
+
+    if [ ! -s ${ENMINST_LIB}/deployment_teardown.py ]; then
+        error "${ENMINST_LIB}/deployment_teardown.py could not be found"
+    fi
+    check_vars ENMINST_SEDFILE
+    /usr/bin/python ${ENMINST_LIB}/deployment_teardown.py -y --sed=$ENMINST_SEDFILE  --command clean_all
+    local _rc_=$?
+    if [ ${_rc_} == ${EXIT_INTERRUPTED} ] ; then
+        warning "Teardown stopped." ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "An error occurred executing the teardown"
+    fi
+    log INFO "Cleanup ENM Deployment completed"
+}
+
+# ********************************************************************
+#
+# Name      : pre_deploy_checks
+# Purpose   : A series of checks to do before deployment starts.
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function pre_deploy_checks() {
+   THIN_LUNS_FILE=/etc/san_luns.cfg
+   log_header "Pre-deployment checks"
+
+   /usr/bin/litp version &> /dev/null || error "litp cannot be executed.  Check that it is installed."
+
+   log INFO "Checking for existing LITP deployment"
+
+   _ctrlc_trap_=0
+   # trap keyboard interrupt (control-c)
+   trap trapped_ctrl_c SIGINT
+
+   declare -A vpaths_and_exceptions
+   while read node ; do
+       vpaths_and_exceptions[$node]=""
+   done <<-NODELIST
+        /infrastructure/service_providers
+        /infrastructure/networking/routes
+        /infrastructure/networking/ip_ranges
+        /infrastructure/networking/network_profiles
+        /infrastructure/items
+        /infrastructure/storage/storage_profiles
+        /infrastructure/storage/file_systems
+        /infrastructure/storage/storage_providers
+        /infrastructure/system_providers
+        /infrastructure/systems
+        /deployments
+        /ms/routes
+        /ms/items
+        /ms/services
+        /ms/ipaddresses
+        /software/items
+        /software/runtimes
+        /software/profiles
+        /software/deployables
+NODELIST
+   vpaths_and_exceptions[/ms/configs]="/ms/configs/sshd_config /ms/configs/sshd_config_[0-9][0-9]"
+
+   for node in "${!vpaths_and_exceptions[@]}"; do
+      /usr/bin/litp show -p "${node}" 2>/dev/null | /bin/grep -q 'children:'
+      if [[ $? -eq 0 ]]
+      then
+          exceptions=${vpaths_and_exceptions[${node}]}
+          if [ "${exceptions}" != "" ]; then
+             exceptions_pattern="^${node}$|${exceptions/ /|}"
+             /usr/bin/litp show -r -p "${node}" 2>/dev/null | /bin/egrep "^${node}" | /bin/egrep -qv "${exceptions_pattern}"
+          fi
+
+          if [[ $? -eq 0 ]]
+          then
+              trap - SIGINT
+              error "LITP model already has content in ${node}, exiting - remove model contents and re-run."
+          fi
+      fi
+   done
+   trap - SIGINT
+   if [ ${_ctrlc_trap_} -eq 1 ] ; then
+    return ${EXIT_INTERRUPTED}
+   fi
+
+   # Ensure files do not have Dos style CRLF line endings
+   file $ENMINST_SEDFILE | grep -q CRLF
+   if [[ $? -eq 0 ]]
+   then
+       dos2unix $ENMINST_SEDFILE
+   fi
+
+   # Ensure no Windows line endings in our files
+   for file in $(find  $ENMINST_HOME -type f  -exec file  {} \;|grep CRLF,|cut -d: -f 1)
+   do
+      log DEBUG "$file has CRLF line endings.  Converting with dos2unix"
+      dos2unix $file
+   done
+
+   mkdir -p $ENMINST_RUNTIME || error "Unable to set up runtime directory, $ENMINST_RUNTIME"
+
+   if [ "$THIN" = "true" ]; then
+      log INFO "Thin provisioning will be used on EMC storage."
+      output=$((echo "LUN = thin" > ${THIN_LUNS_FILE} ) 2>&1)
+      if [ $? != 0 ]; then
+          log ERROR "Failed to create ${THIN_LUNS_FILE} file."
+          log ERROR "${output}"
+          exit 1
+      fi
+   fi
+
+}
+
+# ********************************************************************
+#
+# Name      : sub_xml_params
+# Purpose   : Substitute the %%tags%% in the XML templates with
+#             values from the SED file and generated property file.
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#
+# ********************************************************************
+function sub_xml_params() {
+   log_header "Substitute XML parameters"
+
+   check_vars ENMINST_SEDFILE ENMINST_XML_TEMPLATE
+
+   /usr/bin/python ${ENMINST_LIB}/substitute_parameters.py --sed=$ENMINST_SEDFILE --propertyfile="${ENMINST_PROPERTY_FILE_GENERATED}" --xml_template=$ENMINST_XML_TEMPLATE
+  _rc_=$?
+  if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+    return ${EXIT_INTERRUPTED}
+  elif [ ${_rc_} -ne 0 ]; then
+    error "Failed to substitute parameters using parameters: $ENMINST_SEDFILE source: $ENMINST_XML_TEMPLATE"
+  fi
+  log INFO "Substitute XML parameters completed okay"
+  return 0
+}
+
+# ********************************************************************
+#
+# Name      : unity_model_updates
+# Purpose   : If the SAN array is unity, remove the Raid Group entry
+#             from the deployment description, remove the 2nd IP of
+#             the array, and point the fencing LUNs to the Storage
+#             Pool.
+#             TODO: Decide if we want this as a seperate stage
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#
+# ********************************************************************
+function unity_model_updates() {
+  log_header "Unity Model Updates"
+  /usr/bin/python ${ENMINST_LIB}/unity_model_updates.py
+  _rc=$?
+  if [ ${_rc_} -eq 0 ]; then
+    log INFO "Unity Model Updates completed successfully"
+  else
+    error "Failed to update model for Unity"
+  fi
+}
+
+# ********************************************************************
+#
+# Name      : verify_wwpns_are_visible
+# Purpose   : Verifies if node WWPNs are visible to the SAN. First
+#             checks whether deployment is vApp or physical as
+#             verifying WWPNs is not applicable to vApps.
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#
+# ********************************************************************
+function verify_wwpns_are_visible() {
+   log_header "verifying WWPNs are visible to SAN"
+
+   check_vars ENMINST_SEDFILE
+
+   /usr/sbin/dmidecode -s system-product-name | /usr/bin/tail -1 | /bin/grep -q Virtual
+   if [ $? -eq 0 ] ; then
+     log INFO "Verify WWPNs not applicable to vApps, skipping.."
+     return 0
+   fi
+
+   /opt/ericsson/enminst/bin/verify_wwpn.sh -s ${ENMINST_SEDFILE}
+   if [ $? -ne 0 ] ; then
+     error "Failed verifying if WWPNs are visible to the SAN"
+   fi
+
+   log DEBUG "Verification of WWPNs completed"
+}
+
+# ********************************************************************
+#
+# Name      : set_encrypt_pw_cloud
+# Purpose   : In the cloud, there is no iLO, so there are no iLO
+#             parameters (IP, username, password) in the SED.
+#             However, the Redfish Cloud Helper Tool, which is used to
+#             PXE boot the managed nodes, still requirea username
+#             and password to be available from the litpcrypt database.
+#             This function sets up this user (called no_user) and
+#             gives it a password (no_password), the same user is used
+#             for all managed nodes.
+#             We also need to set the sfs user password in the Cloud.
+#             Encrypt configmanager passwords
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+
+# ********************************************************************
+#
+# Name      : set_encrypted_pwds
+# Purpose   : Get parameters from SED and set encrypted passwords
+#             using the LITP encrpyted password function.
+#             Set the passwords for the Managed Node iLO to be used
+#             by the LITP plan for PXE booting the Managed Nodes.
+#             Encrypt configmanager passwords
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function set_encrypted_pwds(){
+
+    log_header "Setting encrypted passwords"
+    check_vars ENMINST_SEDFILE
+
+    /usr/bin/python ${ENMINST_LIB}/h_litp/sed_password_encrypter.py --sed ${ENMINST_SEDFILE} --type ${ENMINST_ENVIRONMENT}
+    if [ $? -ne 0 ] ; then
+      error "Failed to store encrypted passwords!"
+    fi
+
+    log DEBUG "Function set_encrypted_pwds completed"
+
+    set_configmanager_pwd
+
+
+}
+# ********************************************************************
+#
+# Name      : set_configmanager_pwd
+# Purpose   : Some security related properties are stored in SED
+#             in clear text format and need to be encrypted and stored
+#             in temporary file defined by ${ENMINST_PROPERTY_FILE_GENERATED}
+#             variable
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function set_configmanager_pwd(){
+
+    log_header "Setting configmanager properties"
+
+    ENMINST_PROPERTY_FILE_GENERATED=$( mktemp )
+    trap 'rm -f ${ENMINST_PROPERTY_FILE_GENERATED}' EXIT
+
+    if [[ ${VERBOSE} == 'true' || ${LOG_LEVEL} == 'DEBUG' ]]; then
+        VERBOSE_OPT='--verbose'
+    fi
+
+    /usr/bin/python ${ENMINST_LIB}/encrypt_passwords.py ${VERBOSE_OPT} --sed $ENMINST_SEDFILE --passwords_store "${ENMINST_PROPERTY_FILE_GENERATED}"
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/encrypt_passwords.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : create_consul_rsyslog_rule
+# Purpose   : Creates a rsyslog rule conf file that changes Consul
+              ERROR to WARN during install
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function create_consul_rsyslog_rule(){
+
+    log_header "Create Consul rsyslog conf file"
+
+    if [[ ${VERBOSE} == 'true' || ${LOG_LEVEL} == 'DEBUG' ]]; then
+        VERBOSE_OPT='--verbose'
+    fi
+
+    /usr/bin/python ${ENMINST_LIB}/rsyslog_consul_pre_install_step.py ${VERBOSE_OPT}
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/rsyslog_consul_pre_install_step.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : remove_consul_rsyslog_rule
+# Purpose   : Removes the rsyslog rule conf file that changed the Consul
+              ERROR to WARN during install
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function remove_consul_rsyslog_rule(){
+
+    log_header "Remove Consul rsyslog conf file"
+
+    if [[ ${VERBOSE} == 'true' || ${LOG_LEVEL} == 'DEBUG' ]]; then
+        VERBOSE_OPT='--verbose'
+    fi
+
+    /usr/bin/python ${ENMINST_LIB}/rsyslog_consul_post_install_step.py ${VERBOSE_OPT}
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/rsyslog_consul_post_install_step.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : crypto_service_update_pwd
+# Purpose   : Execute a script to generate a new key in vault
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function crypto_service_update_pwd(){
+
+    log_header "Setting crypto_service_update_pwd properties"
+
+    if [[ ${VERBOSE} == 'true' || ${LOG_LEVEL} == 'DEBUG' ]]; then
+        VERBOSE_OPT='--verbose'
+    fi
+
+    /usr/bin/python ${ENMINST_LIB}/crypto_service.py ${VERBOSE_OPT}
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/crypto_service.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : load_run_plan
+# Purpose   : Load the deployment model into LITP, create and run the plan
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function load_run_plan() {
+    log_header "Load and Run Plan"
+
+    if [ ! -s ${ENMINST_LIB}/deployer.py ]; then
+        error "${ENMINST_LIB}/deployer.py could not be found"
+    fi
+
+    local _extra_params_=""
+    if [ "${VERBOSE}" == "true" ]; then
+        _extra_params_="--verbose"
+    fi
+
+    log DEBUG "Checking variables used in load_run_plan"
+    check_vars ENMINST_XML_DEPLOYMENT
+    read_file_ok ${ENMINST_XML_DEPLOYMENT}
+    if [ $? -ne 0 ]; then
+        error "Cannot read ${ENMINST_XML_DEPLOYMENT}"
+    fi
+
+    log INFO "Deploying ENM using ${ENMINST_XML_DEPLOYMENT}"
+    /usr/bin/python ${ENMINST_LIB}/deployer.py --model_xml ${ENMINST_XML_DEPLOYMENT} --sed ${ENMINST_SEDFILE} ${_extra_params_}
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/deployer.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+    log INFO "Load and Run Plan completed okay"
+    return 0
+}
+# ********************************************************************
+#
+# Name      : load_resume_plan
+# Purpose   : Resume the failed LITP plan
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function load_resume_plan() {
+    log_header "Resume Failed LITP Plan"
+
+    if [ ! -s ${ENMINST_LIB}/deployer.py ]; then
+        error "${ENMINST_LIB}/deployer.py could not be found"
+    fi
+
+    local verbose="False"
+    if [ "${VERBOSE}" == "true" ]; then
+        verbose="True"
+    fi
+
+    log DEBUG "Checking variables used in load_resume_plan"
+    check_vars ENMINST_XML_DEPLOYMENT
+    read_file_ok ${ENMINST_XML_DEPLOYMENT}
+    if [ $? -ne 0 ]; then
+        error "Cannot Resume. Initial Install failed in or before sub_xml_params stage. Please perform Initial Install."
+    fi
+
+    log INFO "Deploying ENM using ${ENMINST_XML_DEPLOYMENT}"
+    /usr/bin/python -c "import deployer;deployer.deploy(verbose=${verbose}, run_type='ENM Deployment - Resume Plan', resume_plan='True')"
+    local _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "${ENMINST_LIB}/deployer.py failed to execute successfully: exited -> ${_rc_}"
+    fi
+    log INFO "Resume Plan completed okay"
+    return 0
+}
+
+# ********************************************************************
+#
+# Name      : post_install
+# Purpose   : execute services post install
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function post_install() {
+    log_header "Post Installation Stage"
+    remove_consul_rsyslog_rule
+    post_install_sfs
+    litp_state_backup
+    cleanup_java_core_dumps
+    san_fault_check_cron
+    nasaudit_error_check_cron
+    post_install_es_log_admin
+    update_versions
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ] ; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ] ; then
+      return ${_rc_}
+    fi
+    log INFO "Version's and history's have been updated"
+    show_enm_version
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ] ; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ] ; then
+      return ${_rc_}
+    fi
+    neo4j_set_state
+    crypto_service_update_pwd
+    neo4j_post_install_hardening
+    log INFO "ENM successfully deployed"
+}
+
+# ********************************************************************
+#
+# Name      : post_install_sfs
+# Purpose   : execute services post install for sfs
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function post_install_sfs() {
+    get_sed_params $ENMINST_SEDFILE nas_type
+    [ ! -z "$nas_type" ] && [ "$nas_type" != "veritas" ] && return 0
+    log INFO "Adding NAS defragmentation script to cron..."
+    echo "7 2 * * 2 root /opt/ericsson/enminst/bin/defrag_nas_fs.sh" > '/etc/cron.d/defrag_nas_fs'
+    log INFO "Adding NAS defragmentation script to cron okay"
+}
+
+# ********************************************************************
+#
+# Name      : post_install_es_log_admin
+# Purpose   : execute post install script of ERIClogadmin package
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function post_install_es_log_admin() {
+    if [ -e /opt/ericsson/enminst/bin/esadmin_password_set.sh ] ; then
+       /bin/sh /opt/ericsson/enminst/bin/esadmin_password_set.sh
+       ret_code=$?
+       if [ $ret_code -eq 0 ]; then
+          log INFO "Execution of esadmin_password script successful"
+       else
+          log INFO "Execution of esadmin_password script failed"
+       fi
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : update_versions
+# Purpose   : update version and history
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function update_versions() {
+    log INFO "Updating ENM & LITP version and history"
+    /usr/bin/python -c "import deployer; deployer.Deployer.update_version_and_history()"
+    return $?
+}
+
+
+# ********************************************************************
+#
+# Name      : show_enm_version
+# Purpose   : Show versions of installed software - LITP2 and ENM
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function show_enm_version() {
+    echo
+    /usr/bin/python -c "import enm_version; enm_version.display_log_enminst()"
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        warning "Problem showing versions of the installed software"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : neo4j_set_state
+# Purpose   : Offline Neo4j SG if Versant still in use
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function neo4j_set_state() {
+    echo
+    echo "Neo4j SG set state"
+    /usr/bin/timeout 15  /bin/grep "dps_persistence_provider=neo4j"  /ericsson/tor/data/global.properties > /tmp/neo4j_in_use
+    fs=$(wc -c <"/tmp/neo4j_in_use")
+    if [  $fs  -le 0 ]; then
+        echo  "Neo4j NOT in use, should be offline"
+        /usr/bin/timeout 60 /opt/ericsson/enminst/bin/vcs.bsh -c db_cluster --groups | /bin/grep -i neo4j_clustered_service | /bin/awk '{print $2 " " $6}'  | /bin/grep ONLINE | /bin/awk '{print $1}'  | /usr/bin/head --lines=1 > /tmp/neo4j_sg_name
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem reading Neo4j SG state"
+            return 0
+        fi
+        sg_name=$(</tmp/neo4j_sg_name)
+        echo "Neo4j SG name: $sg_name;"
+        if [ -z "$sg_name" ]; then
+            echo  "Neo4j SG not deployed or not online"
+            return 0
+        fi
+        echo "Neo4j is online, trying offline"
+        /usr/bin/timeout  300 /opt/ericsson/enminst/bin/vcs.bsh --offline -g $sg_name
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem offlining  Neo4j SG"
+            return 0
+        fi
+        echo  "Neo4j offline, trying to freeze persistently"
+        /usr/bin/timeout  300 /opt/ericsson/enminst/bin/vcs.bsh --freeze -g $sg_name -p
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem freezing Neo4j SG"
+            return 0
+        fi
+    fi
+    if [  $fs  -gt 1 ]; then
+        echo  "Neo4j is in use, Versant should be offline"
+        /usr/bin/timeout 60 /opt/ericsson/enminst/bin/vcs.bsh -c db_cluster --groups | /bin/grep -i versant_clustered_service | /bin/awk '{print $2 " " $6}'  | /bin/grep ONLINE | /bin/awk '{print $1}'  | /usr/bin/head --lines=1 > /tmp/versant_sg_name
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem reading Versant SG state"
+            return 0
+        fi
+        sg_name=$(</tmp/versant_sg_name)
+        echo "Versant SG name: $sg_name;"
+        if [ -z "$sg_name" ]; then
+            echo  "Versant SG not deployed or not online"
+            return 0
+        fi
+        echo "Versant is online, trying offline"
+        /usr/bin/timeout  300 /opt/ericsson/enminst/bin/vcs.bsh --offline -g $sg_name
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem offlining Versant SG"
+            return 0
+        fi
+        echo  "Versant offline, trying to freeze persistently"
+        /usr/bin/timeout  300 /opt/ericsson/enminst/bin/vcs.bsh --freeze -g $sg_name -p
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            echo "Problem freezing Versant SG"
+            return 0
+        fi
+    fi
+    return 0
+}
+
+# ********************************************************************
+#
+# Name      : neo4j_post_install_hardening
+# Purpose   : Store PaswordKey in VaultService and passwords for Neo4j db users in consul
+# Parameters: None
+#
+# ********************************************************************
+function neo4j_post_install_hardening() {
+    if [ -f /opt/ericsson/nms/litp/lib/scripts/neo4j_hardening_password.sh ]; then
+        echo YeS | /opt/ericsson/nms/litp/lib/scripts/neo4j_hardening_password.sh --run_initial_neo4j_hardening
+        _rc_=$?
+        if [ ${_rc_} -ne 0 ]; then
+            log ERROR "Neo4j hardening failed, cause of the issue should be fixed and run hardening again as soon as possible after initial installation: '/opt/ericsson/nms/litp/lib/scripts/neo4j_hardening_password.sh --run_initial_neo4j_hardening'"
+        else
+            log INFO "Neo4j hardening successful"
+        fi
+    else
+        log INFO "No Neo4j hardening script found, Neo4j is unhardened."
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : litp_state_backup
+# Purpose   : add cron entry for litp model backup
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function litp_state_backup() {
+    echo
+    /usr/bin/python -c "import h_util.h_utils; h_util.h_utils.litp_backup_state_cron('/etc/cron.d/litp_state_backup','/ericsson/tor/data/enmbur/lmsdata/')"
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        warning "Problem adding cron.d entry for litp_state_backup"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : get_ms_disk_uuid
+# Purpose   : Get uuid of MS root disk and populate working params
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+
+function get_ms_disk_uuid() {
+
+    log INFO "Determining MS disk uuid"
+    /usr/bin/python ${ENMINST_LIB}/ms_uuid.py
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "Failed to obtain UUID of root disk!"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : get_ssh_key_value
+# Purpose   : Get ssh key for KVM's and populate working params
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+
+function get_ssh_key_value() {
+    log INFO "Generating SSH Key value"
+    /usr/bin/python ${ENMINST_LIB}/ssh_key_creation.py
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        error "Failed to obtain SSH Key value for KVMs"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : san_mgt_storage_route
+# Purpose   : Add a default route from the Storage VLAN on the DB nodes if
+#             the SAN SP addresses are not on the Storage VLAN
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function san_mgt_storage_route()
+{
+  get_sed_params $ENMINST_SEDFILE nas_type
+  if [ "$nas_type" == "unityxt" ]; then
+    get_sed_params $ENMINST_SEDFILE storage_gateway
+    if [ -z "$storage_gateway" ]; then
+      error "Failed to get storage_gateway from ${ENMINST_SEDFILE}"
+    fi
+    /usr/bin/python ${ENMINST_LIB}/workarounds/storage_default_route/storage_default_route.py \
+      --sed ${ENMINST_SEDFILE} --gw "${storage_gateway}" --update ${ENMINST_XML_DEPLOYMENT} 2>&1
+  else
+    /usr/bin/python ${ENMINST_LIB}/workarounds/storage_default_route/storage_default_route.py \
+      --sed ${ENMINST_SEDFILE} --auto --update ${ENMINST_XML_DEPLOYMENT} 2>&1
+  fi
+  _rc_=$?
+  if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+    return ${EXIT_INTERRUPTED}
+  elif [ ${_rc_} -ne 0 ]; then
+    error "Failed SAN SP WA"
+  fi
+}
+
+# ********************************************************************
+#
+# Name      : cleanup_java_core_dumps
+# Purpose   : cleanup java dumps & core files
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function cleanup_java_core_dumps() {
+    err=$(/usr/bin/python -c "import h_util.h_utils; h_util.h_utils.cleanup_java_core_dumps_cron('/etc/cron.daily/cleanup_java_core_dumps')" 2>&1)
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+        return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        log ERROR "Problem adding cron.daily entry for cleanup_java_core_dumps"
+        error ${err}
+    fi
+    log INFO "Adding cron.daily entry for cleanup_java_core_dumps completed"
+}
+
+# ********************************************************************
+#
+# Name      : nasaudit_error_check_cron
+# Purpose   : add cron entry for checking nas audit error
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function nasaudit_error_check_cron() {
+    get_sed_params $ENMINST_SEDFILE nas_type
+    [ ! -z "$nas_type" ] && [ "$nas_type" != "veritas" ] && return 0
+    echo
+    /usr/bin/python -c "import h_util.h_utils; h_util.h_utils.create_nasaudit_errorcheck_cron('/etc/cron.d/nasaudit_error_check')"
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        warning "Problem adding cron.d entry for nasaudit_error_check_cron"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : san_fault_check_cron
+# Purpose   : add cron entry for checking san faults
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function san_fault_check_cron() {
+    echo
+    /usr/bin/python -c "import h_util.h_utils; h_util.h_utils.create_san_fault_check_cron('/etc/cron.d/san_fault_checker')"
+    _rc_=$?
+    if [ ${_rc_} -eq ${EXIT_INTERRUPTED} ]; then
+      return ${EXIT_INTERRUPTED}
+    elif [ ${_rc_} -ne 0 ]; then
+        warning "Problem adding cron.d entry for san_fault_check_cron"
+    fi
+}
+
+# ********************************************************************
+#
+# Name      : copy_ssh_banners_motd
+# Purpose   : Copy SSH login banner and MOTD into LITP files for usage in VMs
+# Parameters: None
+# Return Values:
+#                0 - if ok
+#               !0 - if not ok
+#
+# ********************************************************************
+function copy_ssh_banners_motd() {
+    echo "COPY CUSTOM BANNER FILES"
+}
+

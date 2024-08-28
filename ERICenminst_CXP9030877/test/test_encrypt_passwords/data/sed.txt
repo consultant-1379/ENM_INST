@@ -1,0 +1,22 @@
+#SED Template Version: 1.0.43
+Deployment_Type=
+Hardware_Type=cloud
+
+ENMservices_subnet=192.168.0.0/24
+ENMservices_gateway=192.168.0.1
+storage_subnet=172.16.30.0/24
+backup_subnet=172.16.29.0/24
+jgroups_subnet=10.250.244.0/22
+internal_subnet=10.247.244.0/22
+
+openidm_admin_password=OpenidmAdm01
+com_inf_ldap_admin_access_password=passw0rd
+ldap_admin_password=ldapadmin
+idm_mysql_admin_password=MysqlAdm01
+postgresql01_admin_password=P0stgreSQL11
+default_security_admin_password=TestPassw0rd
+
+neo4j_admin_user_password=Neo4jadmin123
+neo4j_dps_user_password=Neo4juser123
+neo4j_reader_user_password=Neo4jreader123
+neo4j_ddc_user_password=Neo4jddc123

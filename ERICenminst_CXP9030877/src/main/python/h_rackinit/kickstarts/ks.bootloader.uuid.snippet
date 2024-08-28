@@ -1,0 +1,95 @@
+target_uuid='@@TARGET_UUID@@'
+shopt -s nocasematch
+shopt -s nocaseglob
+
+declare -a shared_disks
+
+echo \${shared_disks[@]}
+declare -a matches;
+declare -a disk_uuids_to_dd;
+
+for sysfs_link in /sys/class/block/*; do
+        dev_name=\$(udevadm info --query=name --path=\${sysfs_link})
+        declare -A dev_props
+        while read pair; do
+                prop_name=\${pair%%=*}
+                prop_value=\${pair\#*=}
+                dev_props+=([\${prop_name}]=\${prop_value})
+        done << _EOC
+        \$(udevadm info  --query=property --path=\${sysfs_link})
+_EOC
+
+        if [[ !(\${dev_props['ID_TYPE']} == 'disk' && \${dev_props['DEVTYPE']} == 'disk') ]] ; then
+                unset dev_props;
+                continue
+        fi
+
+	if [[ \${target_uuid} == \${dev_props['ID_SERIAL']} || \${target_uuid} == \${dev_props['ID_BUS']}_\${dev_props['ID_SERIAL']} || \${target_uuid} == \${dev_props['ID_SERIAL_SHORT']} ]]; then
+        matches+=(\${dev_name})
+    else
+        is_shared=false
+        for shared_disk in \${shared_disks[@]}; do
+            if [[ \$shared_disk == \${dev_props['ID_SERIAL']} || \$shared_disk == \${dev_props['ID_SERIAL_SHORT']}  ]]; then
+                # it is a shared disk, do not dd it
+                is_shared=true
+            fi
+        done
+        if [[ "\$is_shared" = false ]]; then
+            # If the uuid is not in the array already, then add it to the array of disks to dd
+            if [[ !(\${disk_uuids_to_dd[@]} =~ \${dev_props['ID_SERIAL']}) ]] ; then
+                disk_uuids_to_dd+=(\${dev_props['ID_SERIAL']})
+            fi
+        fi
+    fi
+
+        unset dev_props
+done
+
+for uuid in \${disk_uuids_to_dd[@]}; do
+    udevadm trigger
+
+    echo 'Running dd command on uuid: ' + \$uuid
+    # For debugging we show the entire contents on this directory
+    ls -l /dev/disk/by-id
+    dd if=/dev/zero of=/dev/disk/by-id/scsi-\${uuid} bs=512 count=10
+done
+
+if (( 0 == \${#matches[@]} )); then
+	echo "ERROR: No disks found with uuid \${target_uuid}" >> /dev/tty1
+	echo "Press Enter to reboot" >> /dev/tty1
+	read
+        exit 1
+elif (( 1 < \${#matches[@]} )); then
+	#example:  matches = [sda sdb sdc sdd]
+	all_matches_are_fc_devices=1
+	declare -A matches_hbas
+	for match_devname in \${matches[@]}; do
+		match_devpath=\$( udevadm info --query=path --name=\${match_devname})
+		path=\$(/mnt/runtime/lib/udev/path_id \${match_devpath})
+		path=\${path\#*=}
+		if [[ \${path} != *-fc-* ]]; then
+			all_matches_are_fc_devices=0
+			continue
+		fi
+	done
+
+    if (( 1 != all_matches_are_fc_devices )); then
+        echo "ERROR: not all \${#matches[@]} paths for disk uuid \${target_uuid} are Fibre Channel paths" >> /dev/tty1
+        echo "Press Enter to reboot" >> /dev/tty1
+        read
+        exit 1
+    else
+        sleep 1
+    fi
+    if (( \${#matches[@]} < 4 )); then
+        echo "WARNING: Found only \${#matches[@]} FC paths for disk uuid \${target_uuid}" >> /dev/tty1
+        echo "         For the best redundancy at least 4 paths are recommended, continuing." >> /dev/tty1
+        sleep 5
+    else
+        sleep 1
+    fi
+fi
+
+cat > /tmp/bootloader.info << _EOT
+bootloader --driveorder=\${matches[0]} --location=mbr --md5pass="\\$1\\$VscjuyK8\\$9UuYHrnJ0VEGjKQ/Yeac50" --timeout=10
+_EOT

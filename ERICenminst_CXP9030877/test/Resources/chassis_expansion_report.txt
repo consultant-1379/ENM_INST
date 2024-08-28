@@ -1,0 +1,45 @@
+Enclosure report generated at 14-September-2020 16:56
+
+DETAILS OF BLADES TO BE MOVED
+==============================
+
+|System Name| |Serial Number| |Src iLO IP Address| |Dst iLO IP Address| |Src Bay| |Dst Bay| |Host Name|
+=======================================================================================================
+    db-2        CZ36092PBA         10.141.5.48          10.141.5.64         9   Unknown     ieatrcxb5271
+   scp-2        CZ3542KBRW         10.141.5.52          10.141.5.65        13   Unknown     ieatrcxb4959
+   svc-2        CZ3702A3WX         10.141.5.49          10.141.5.66        10   Unknown     ieatrcxb5483
+   svc-4        CZ35294PAT         10.141.5.50          10.141.5.67        11   Unknown     ieatrcxb5485
+   svc-6        CZ35294PAY         10.141.5.51          10.141.5.68        12   Unknown     ieatrcxb4856
+
+
+DETAILS OF DESTINATION ENCLOSURE
+================================
+HPE BladeSystem Onboard Administrator
+(C) Copyright 2006-2019 Hewlett Packard Enterprise Development LP
+
+ieatc7000-196oa1 [SCRIPT MODE]> SHOW SERVER NAMES
+
+
+Bay Server Name                                       Serial Number   Status   Power   UID Partner
+--- ------------------------------------------------- --------------- -------- ------- --- -------
+  1 [Absent]
+  2 [Absent]
+  3 [Absent]
+  4 [Absent]
+  5 [Absent]
+  6 [Absent]
+  7 [Absent]
+  8 [Absent]
+  9 [Absent]
+ 10 [Absent]
+ 11 [Absent]
+ 12 [Absent]
+ 13 [Absent]
+ 14 [Absent]
+ 15 HP ProLiant BL460c Gen9                           [Unknown]       Other    Off     Off
+ 16 HP ProLiant BL460c Gen9                           [Unknown]       Other    Off     Off
+Totals: 2 server blades installed, 0 powered on.
+
+ieatc7000-196oa1 [SCRIPT MODE]>
+
+SHOW SERVER NAMES

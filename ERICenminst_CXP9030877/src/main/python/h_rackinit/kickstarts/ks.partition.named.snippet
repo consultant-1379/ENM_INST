@@ -1,0 +1,10 @@
+# Hash map
+declare -A disk_list
+# Loop through the data structure we have been passed in and build up a bash
+# hash of device paths based on uuid. Clear all disks in the model
+disk_list["boot_disk"]=\$(shopt -s nocaseglob; ls /dev/@@TARGET_NAME@@)
+drive_dev=@@TARGET_NAME@@
+clearpart_devs=\${clearpart_devs},\${drive_dev}
+echo "clearpart --initlabel --all --drives=\${clearpart_devs/#,/}">/tmp/partitioninfo
+
+# Second loop to generate the partition tables - NB. must be after the clearpart command - hence 2 loops

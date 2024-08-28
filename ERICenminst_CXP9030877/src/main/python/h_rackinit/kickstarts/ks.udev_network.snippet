@@ -1,0 +1,4 @@
+cat << EOF > /etc/udev/rules.d/70-persistent-net.rules
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="@@PXE_NIC_MAC@@", ATTR{type}=="1", KERNEL=="eth*", NAME="@@PXE_NIC_NAME@@"
+EOF
+echo "Existence of this file prevents the /lib/udev/rules.d version generation rules" > /etc/udev/rules.d/75-persistent-net-generator.rules

@@ -1,0 +1,200 @@
+{
+  "_embedded": {
+    "item": [
+      {
+        "item-type-name": "ntp-service",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/ntp_service"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/ntp-service"
+          }
+        },
+        "id": "ntp_service"
+      },
+      {
+        "id": "backup_restore_package",
+        "item-type-name": "package",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/backup_restore_package"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/package"
+          }
+        },
+        "properties": {
+          "epoch": "0",
+          "name": "ERICbackuprestoreservice_CXP9031367"
+        }
+      },
+      {
+        "id": "dpsjparuntime",
+        "item-type-name": "model-deployment-tool-plugin-package",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/dpsjparuntime"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/model-deployment-tool-plugin-package"
+          }
+        },
+        "properties": {
+          "epoch": "0",
+          "name": "ERICdpsjparuntime_CXP9031381"
+        }
+      },
+      {
+        "id": "config_manager",
+        "item-type-name": "config-manager",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/config_manager"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/config-manager"
+          }
+        },
+        "properties": {
+          "owner": "root",
+          "global_properties_path": "/ericsson/tor/data",
+          "group": "root",
+          "mode": "0644"
+        }
+      },
+      {
+        "id": "model_package",
+        "item-type-name": "package-list",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/model_package"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/package-list"
+          }
+        },
+        "properties": {
+          "name": "models"
+        }
+      },
+      {
+        "id": "ms_repo",
+        "item-type-name": "yum-repository",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/ms_repo"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/yum-repository"
+          }
+        },
+        "properties": {
+          "cache_metadata": "false",
+          "ms_url_path": "/ENM_ms_rhel7/",
+          "name": "ms_repo"
+        }
+      },
+      {
+        "id": "common_repo",
+        "item-type-name": "yum-repository",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/common_repo"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/yum-repository"
+          }
+        },
+        "properties": {
+          "cache_metadata": "false",
+          "ms_url_path": "/ENM_common_rhel7/",
+          "name": "common_repo"
+        }
+      },
+      {
+        "id": "db_repo",
+        "item-type-name": "yum-repository",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/db_repo"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/yum-repository"
+          }
+        },
+        "properties": {
+          "cache_metadata": "false",
+          "ms_url_path": "/ENM_db_rhel7/",
+          "name": "db_repo"
+        }
+      },
+      {
+        "id": "services_repo",
+        "item-type-name": "yum-repository",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/services_repo"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/yum-repository"
+          }
+        },
+        "properties": {
+          "cache_metadata": "false",
+          "ms_url_path": "/ENM_services_rhel7/",
+          "name": "services_repo"
+        }
+      },
+      {
+        "id": "model_repo",
+        "item-type-name": "yum-repository",
+        "applied_properties_determinable": true,
+        "state": "Applied",
+        "_links": {
+          "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/items/model_repo"
+          },
+          "item-type": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/yum-repository"
+          }
+        },
+        "properties": {
+          "cache_metadata": "false",
+          "ms_url_path": "/ENM_models_rhel7/",
+          "name": "model_repo"
+        }
+      }
+    ]
+  },
+  "item-type-name": "collection-of-software-item",
+  "applied_properties_determinable": true,
+  "state": "Applied",
+  "_links": {
+    "self": {
+      "href": "https://localhost:9999/litp/rest/v1/software/items"
+    },
+    "collection-of": {
+      "href": "https://localhost:9999/litp/rest/v1/item-types/software-item"
+    }
+  },
+  "id": "items"
+}

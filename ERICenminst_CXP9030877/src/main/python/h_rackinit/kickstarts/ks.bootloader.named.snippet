@@ -1,0 +1,24 @@
+target_name='@@TARGET_NAME@@'
+shopt -s nocasematch
+shopt -s nocaseglob
+
+
+declare -a matches;
+for sysfs_link in /sys/class/block/*; do
+        if [[ \${sysfs_link\#\#*/} == \$target_name ]]; then
+                matches+=(\${target_name})
+        else
+                dd if=/dev/zero of=\${sysfs_link} bs=512 count=10
+        fi
+done
+
+if (( 0 == \${#matches[@]} )); then
+	echo "ERROR: No disks found with device name \${target_name}" >> /dev/tty1
+	echo "Press Enter to reboot" >> /dev/tty1
+	read
+        exit 1
+fi
+
+cat > /tmp/bootloader.info << _EOT
+bootloader --driveorder=\${matches[0]} --location=mbr --md5pass="\\$1\\$VscjuyK8\\$9UuYHrnJ0VEGjKQ/Yeac50" --timeout=10
+_EOT

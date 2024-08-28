@@ -1,0 +1,12 @@
+name=ERICenmsguiservice_CXP9031574
+version=1.0.23
+packager=R1A23
+url=www.ericsson.com
+
+name=ERICddc_CXP9030294
+version=3.3.5
+packager=CXP9030294
+url="test"
+
+
+

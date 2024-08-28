@@ -1,0 +1,35 @@
+{
+    "_embedded": {
+        "item": [
+            {
+                "id": "pmserv_pkg", 
+                "item-type-name": "vm-package", 
+                "applied_properties_determinable": true, 
+                "state": "Applied", 
+                "_links": {
+                    "self": {
+                        "href": "https://localhost:9999/litp/rest/v1/software/services/pmserv/vm_packages/pmserv_pkg"
+                    }, 
+                    "item-type": {
+                        "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+                    }
+                }, 
+                "properties": {
+                    "name": "ERICenmsgpmservice_CXP9031580"
+                }
+            }
+        ]
+    }, 
+    "item-type-name": "collection-of-vm-package", 
+    "applied_properties_determinable": true, 
+    "state": "Applied", 
+    "_links": {
+        "self": {
+            "href": "https://localhost:9999/litp/rest/v1/software/services/pmserv/vm_packages"
+        }, 
+        "collection-of": {
+            "href": "https://localhost:9999/litp/rest/v1/item-types/vm-package"
+        }
+    }, 
+    "id": "vm_packages"
+}

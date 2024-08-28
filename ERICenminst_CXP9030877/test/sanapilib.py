@@ -1,0 +1,2 @@
+CONTAINER_RAID_GROUP = 'RaidGroup'
+CONTAINER_STORAGE_POOL = 'StoragePool'
